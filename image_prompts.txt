@@ -1,0 +1,51 @@
+=============================================
+MISSING WEBSITE IMAGES - GENERATION PROMPTS
+=============================================
+The following images are currently MISSING from your website and need to be generated.
+Existing images (Countries, Blogs, Team, Testimonials, and Primary Services) have been excluded.
+
+---------------------------------------------
+1. MISSING SERVICE IMAGES
+(Currently using placeholders or wrong images)
+---------------------------------------------
+[Service: Tourist Visa]
+Filename: service-tourist-visa.jpg
+Location: public/images/
+Prompt: Happy traveler holding a passport and boarding pass at a modern airport terminal, looking out of a window at airplanes, excitement, vacation mode, high quality.
+
+[Service: Immigration Services]
+Filename: service-immigration.jpg
+Location: public/images/
+Prompt: A happy family (parents and child) moving into a new home in Canada or Australia, holding keys, smiling, cardboard boxes nearby, new beginning, warm sunlight, residential background.
+
+---------------------------------------------
+2. WEBINAR THUMBNAILS
+(Required for Resources Page - Currently missing)
+---------------------------------------------
+[Webinar: Study in UK]
+Filename: webinars/uk-webinar.jpg
+Location: public/images/webinars/
+Prompt: YouTube thumbnail style image, bold text "STUDY IN UK", background showing Big Ben and red bus, professional presenter on right side, inviting and educational, 16:9 aspect ratio.
+
+[Webinar: Study in USA]
+Filename: webinars/usa-webinar.jpg
+Location: public/images/webinars/
+Prompt: YouTube thumbnail style image, bold text "STUDY IN USA", background showing Statue of Liberty and university campus, professional presenter on right side, patriotic colors, 16:9 aspect ratio.
+
+[Webinar: Study in Canada]
+Filename: webinars/canada-webinar.jpg
+Location: public/images/webinars/
+Prompt: YouTube thumbnail style image, bold text "STUDY IN CANADA", background showing Toronto skyline and Maple Leaf flag, professional presenter on right side, clean design, 16:9 aspect ratio.
+
+---------------------------------------------
+3. OPTIONAL / NICE TO HAVE
+(Only generate if you want to polish the site further)
+---------------------------------------------
+[Background Pattern]
+Filename: pattern-bg.png
+Prompt: Subtle abstract geometric pattern background, light blue and white color palette, clean, modern, corporate, minimal, seamless texture, very light opacity.
+
+[Tools Backgrounds]
+(For Resources Page Tool Cards)
+- Filename: tools/calculator-bg.jpg (Financial/Math abstract)
+- Filename: tools/checklist-bg.jpg (Checklist/Paper abstract)
