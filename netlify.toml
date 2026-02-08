@@ -6,6 +6,10 @@
   publish = "app/dist"
   functions = "functions"
 
+  # Environment variables for build
+[build.environment]
+  NPM_FLAGS = "--include=dev"
+
 # Cache headers for optimal caching strategy
 [[headers]]
   for = "/*"
