@@ -24,56 +24,54 @@ const CountryDetailPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative w-full h-[500px] overflow-hidden">
+      <section className="relative w-full min-h-[400px] md:h-[500px] overflow-hidden flex items-center">
         <div className="absolute inset-0">
           <img src={country.heroImage} alt={country.name} className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-black/50" />
         </div>
 
-        <div className="relative h-full flex flex-col justify-center">
-          <div className="container-custom">
-            <Link
-              to="/study-abroad"
-              className="inline-flex items-center text-white/80 hover:text-white mb-6"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Destinations
-            </Link>
+        <div className="container-custom relative z-10 pt-32 pb-12 md:pt-0 md:pb-0">
+          <Link
+            to="/study-abroad"
+            className="inline-flex items-center text-white/80 hover:text-white mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Destinations
+          </Link>
 
-            <div className="flex items-center gap-4 mb-6">
-              <span className="text-6xl md:text-7xl">{country.flag}</span>
-              <div>
-                <h1 className="text-4xl md:text-5xl font-display font-bold text-white">
-                  Study in {country.name}
-                </h1>
-                <p className="text-white/80 text-lg mt-2">
-                  Your gateway to world-class education
-                </p>
-              </div>
+          <div className="flex items-center gap-4 mb-6">
+            <span className="text-6xl md:text-7xl">{country.flag}</span>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-display font-bold text-white">
+                Study in {country.name}
+              </h1>
+              <p className="text-white/80 text-lg mt-2">
+                Your gateway to world-class education
+              </p>
             </div>
+          </div>
 
-            {/* Quick Stats */}
-            <div className="hidden md:grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <GraduationCap className="w-6 h-6 text-primary-300 mb-2" />
-                <div className="text-2xl font-bold text-white">{country.stats.universities}+</div>
-                <div className="text-white/70 text-sm">Universities</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <TrendingUp className="w-6 h-6 text-green-400 mb-2" />
-                <div className="text-2xl font-bold text-white">{country.stats.visaSuccessRate}%</div>
-                <div className="text-white/70 text-sm">Visa Success</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <DollarSign className="w-6 h-6 text-yellow-400 mb-2" />
-                <div className="text-2xl font-bold text-white">{country.stats.studentsPlaced}+</div>
-                <div className="text-white/70 text-sm">Students Placed</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <Briefcase className="w-6 h-6 text-secondary-300 mb-2" />
-                <div className="text-2xl font-bold text-white">Work</div>
-                <div className="text-white/70 text-sm">Opportunities</div>
-              </div>
+          {/* Quick Stats */}
+          <div className="hidden md:grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <GraduationCap className="w-6 h-6 text-primary-300 mb-2" />
+              <div className="text-2xl font-bold text-white">{country.stats.universities}+</div>
+              <div className="text-white/70 text-sm">Universities</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <TrendingUp className="w-6 h-6 text-green-400 mb-2" />
+              <div className="text-2xl font-bold text-white">{country.stats.visaSuccessRate}%</div>
+              <div className="text-white/70 text-sm">Visa Success</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <DollarSign className="w-6 h-6 text-yellow-400 mb-2" />
+              <div className="text-2xl font-bold text-white">{country.stats.studentsPlaced}+</div>
+              <div className="text-white/70 text-sm">Students Placed</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+              <Briefcase className="w-6 h-6 text-secondary-300 mb-2" />
+              <div className="text-2xl font-bold text-white">Work</div>
+              <div className="text-white/70 text-sm">Opportunities</div>
             </div>
           </div>
         </div>

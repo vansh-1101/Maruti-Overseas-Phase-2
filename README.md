@@ -79,5 +79,13 @@ This will compile the project into the `dist` folder, optimized for deployment.
 
 If you wish to contribute to this project, please ensure you follow the existing code style and create a pull request with your changes.
 
+## 📱 Latest Updates (v1.1)
+
+- **Mobile Responsiveness**: Comprehensive audit and fix for all pages to ensure a native app-like feel.
+  - **Hero Sections**: Refactored all hero sections (Home, About, Contact, proper Services, Countries, Resources, Blog) to use flexible `min-height` and relative positioning on mobile. This eliminates content overlap with the fixed navbar and ensures content flows naturally on smaller screens.
+  - **Navigation**: Optimized mobile menu touch targets and logo scaling.
+  - **Layouts**: Adjusted grid layouts and padding across all sections to prevent horizontal scrolling and ensure text readability.
+  - **Courses Page**: Optimized filter section layout for small screens.
+
 ---
 *Built for Maruti Overseas.*

@@ -81,7 +81,7 @@ const Navbar = () => {
               <img
                 src="/images/logo.jpg"
                 alt="Maruti Overseas Consultancy"
-                className="relative h-14 w-14 rounded-full object-cover border-2 border-white/90 shadow-lg"
+                className="relative h-12 w-12 md:h-14 md:w-14 rounded-full object-cover border-2 border-white/90 shadow-lg"
               />
             </div>
             <div className="hidden sm:block">
@@ -234,7 +234,7 @@ const Navbar = () => {
                     <div className="space-y-1">
                       <button
                         onClick={() => setMobileExpanded(mobileExpanded === link.label ? null : link.label)}
-                        className="flex items-center justify-between w-full px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50 rounded-md"
+                        className="flex items-center justify-between w-full px-3 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 rounded-md"
                       >
                         {link.label}
                         <ChevronDown className={cn("w-4 h-4 transition-transform", mobileExpanded === link.label ? "rotate-180" : "")} />
@@ -245,7 +245,7 @@ const Navbar = () => {
                             <Link
                               key={item.label}
                               to={item.href}
-                              className="block px-3 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                              className="block px-3 py-3 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
                               onClick={() => setIsMobileMenuOpen(false)}
                             >
                               {item.label}
@@ -258,7 +258,7 @@ const Navbar = () => {
                     <Link
                       to={link.href}
                       className={cn(
-                        'block px-3 py-2 rounded-md text-sm font-medium',
+                        'block px-3 py-3 rounded-md text-sm font-medium',
                         isActive(link.href)
                           ? 'text-primary-600 bg-primary-50'
                           : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'

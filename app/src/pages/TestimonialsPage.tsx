@@ -5,7 +5,7 @@ const TestimonialsPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative w-full h-[500px] overflow-hidden">
+      <section className="relative w-full min-h-[400px] md:h-[500px] overflow-hidden flex items-center">
         <div className="absolute inset-0">
           <img
             src="/images/hero-main.jpg"
@@ -14,19 +14,17 @@ const TestimonialsPage = () => {
           />
           <div className="absolute inset-0 bg-black/60" />
         </div>
-        <div className="relative h-full flex flex-col justify-center">
-          <div className="container-custom">
-            <div className="max-w-3xl text-center mx-auto">
-              <span className="inline-block px-4 py-1.5 bg-white/10 text-white rounded-full text-sm font-medium mb-4">
-                Success Stories
-              </span>
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
-                What Our Students Say
-              </h1>
-              <p className="text-xl text-white/90">
-                Hear from students who achieved their study abroad dreams with our guidance.
-              </p>
-            </div>
+        <div className="container-custom relative z-10 pt-32 pb-12 md:pt-0 md:pb-0">
+          <div className="max-w-3xl text-center mx-auto">
+            <span className="inline-block px-4 py-1.5 bg-white/10 text-white rounded-full text-sm font-medium mb-4">
+              Success Stories
+            </span>
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
+              What Our Students Say
+            </h1>
+            <p className="text-xl text-white/90">
+              Hear from students who achieved their study abroad dreams with our guidance.
+            </p>
           </div>
         </div>
       </section>

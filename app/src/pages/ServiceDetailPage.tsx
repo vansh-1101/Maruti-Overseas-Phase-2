@@ -29,7 +29,7 @@ const ServiceDetailPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative w-full h-[500px] overflow-hidden">
+      <section className="relative w-full min-h-[400px] md:h-[500px] overflow-hidden flex items-center">
         <div className="absolute inset-0">
           <img
             src={service.image}
@@ -38,23 +38,21 @@ const ServiceDetailPage = () => {
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
-        <div className="relative h-full flex flex-col justify-center">
-          <div className="container-custom">
-            <Link
-              to="/services"
-              className="inline-flex items-center text-white/80 hover:text-white mb-6"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Services
-            </Link>
+        <div className="container-custom relative z-10 pt-32 pb-12 md:pt-0 md:pb-0">
+          <Link
+            to="/services"
+            className="inline-flex items-center text-white/80 hover:text-white mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Services
+          </Link>
 
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
-              {service.name}
-            </h1>
-            <p className="text-xl text-white/90 max-w-3xl">
-              {service.fullDescription}
-            </p>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
+            {service.name}
+          </h1>
+          <p className="text-xl text-white/90 max-w-3xl">
+            {service.fullDescription}
+          </p>
         </div>
       </section>
 

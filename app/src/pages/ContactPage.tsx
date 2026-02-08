@@ -71,8 +71,8 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative w-full h-[500px] overflow-hidden">
-        <div className="absolute inset-0">
+      <section className="relative w-full min-h-[400px] md:h-[500px] overflow-hidden flex items-center">
+        <div className="absolute inset-0 z-0">
           <img
             src="/images/hero-main.jpg"
             alt="Contact Us"
@@ -80,20 +80,18 @@ const ContactPage = () => {
           />
           <div className="absolute inset-0 bg-black/60" />
         </div>
-        <div className="relative h-full flex flex-col justify-center">
-          <div className="container-custom">
-            <div className="max-w-3xl">
-              <span className="inline-block px-4 py-1.5 bg-white/10 text-white rounded-full text-sm font-medium mb-4">
-                Contact Us
-              </span>
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
-                Get in Touch
-              </h1>
-              <p className="text-xl text-white/90">
-                Have questions about studying abroad? We're here to help.
-                Reach out to us and our experts will guide you.
-              </p>
-            </div>
+        <div className="container-custom relative z-10 pt-32 pb-12 md:pt-0 md:pb-0">
+          <div className="max-w-3xl">
+            <span className="inline-block px-4 py-1.5 bg-white/10 text-white rounded-full text-sm font-medium mb-4">
+              Contact Us
+            </span>
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
+              Get in Touch
+            </h1>
+            <p className="text-xl text-white/90">
+              Have questions about studying abroad? We're here to help.
+              Reach out to us and our experts will guide you.
+            </p>
           </div>
         </div>
       </section>

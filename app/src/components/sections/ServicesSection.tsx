@@ -87,7 +87,7 @@ const ServicesSection = () => {
               <Link
                 key={service.id}
                 to={`/services/${service.id}`}
-                className="group relative bg-white rounded-[2rem] p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border border-gray-100 overflow-hidden"
+                className="group relative bg-white rounded-[2rem] p-6 md:p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border border-gray-100 overflow-hidden"
               >
                 {/* Background Gradient Effect */}
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-5 rounded-bl-[100px] transition-all duration-500`} />

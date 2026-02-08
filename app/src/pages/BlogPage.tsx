@@ -21,7 +21,7 @@ const BlogPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="pt-32 pb-16 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700">
+      <section className="pt-32 pb-24 md:pb-16 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700">
         <div className="container-custom">
           <div className="max-w-3xl">
             <span className="inline-block px-4 py-1.5 bg-white/10 text-white rounded-full text-sm font-medium mb-4">

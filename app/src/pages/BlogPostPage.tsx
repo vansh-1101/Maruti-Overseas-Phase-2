@@ -24,7 +24,7 @@ const BlogPostPage = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="pt-32 pb-16 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700">
+      <section className="pt-32 pb-24 md:pb-16 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700">
         <div className="container-custom">
           <Link
             to="/resources/blog"
