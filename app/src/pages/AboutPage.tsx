@@ -2,6 +2,34 @@ import { Award, Users, Globe, CheckCircle2 } from 'lucide-react';
 import { siteStats } from '@/data/testimonials';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
 
+// Optimized Image Component with lazy loading and responsive support
+const OptimizedImage = ({ src, alt, className, loading = 'lazy', decoding = 'async', ...props }: any) => {
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [imgSrc, setImgSrc] = React.useState(src);
+
+  React.useEffect(() => {
+    // Preload image in the background
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      setImgSrc(src);
+      setIsLoaded(true);
+    };
+  }, [src]);
+
+  return (
+    <img
+      src={imgSrc}
+      alt={alt}
+      className={`${className} transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-50'}`}
+      loading={loading}
+      decoding={decoding}
+      {...props}
+      onLoad={() => setIsLoaded(true)}
+    />
+  );
+};
+
 const AboutPage = () => {
   const values = [
     {
@@ -25,7 +53,6 @@ const AboutPage = () => {
       description: 'We help students see beyond boundaries and achieve their global education dreams.',
     },
   ];
-
   const team = [
     {
       name: 'Chirag Soni',
@@ -40,16 +67,18 @@ const AboutPage = () => {
       description: 'Expert counselor helping students achieve their study abroad dreams.',
     },
   ];
-
   return (
     <div className="min-h-screen">
-      {/* Hero */}
-      <section className="relative w-full h-[500px] overflow-hidden">
+      {/* Hero - with optimized loading */}
+      <section className="relative w-full h-[500px] overflow-hidden bg-gray-900">
         <div className="absolute inset-0 bg-gray-900">
           <img
             src="/images/Your Trusted Partner in Global Education.png"
-            alt="About Us"
-            className="w-full h-full object-cover object-center scale-130 transition-transform duration-700"
+            alt="About Us - Maruti Overseas Consultancy"
+            className="w-full h-full object-cover object-center scale-130 transition-transform duration-700 will-change-transform"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/80 to-black/70" />
         </div>
@@ -70,7 +99,6 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-
       {/* Our Story */}
       <section className="section-padding bg-white">
         <div className="container-custom">
@@ -103,8 +131,14 @@ const AboutPage = () => {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden">
-                <img src="/images/hero-main.jpg" alt="Our Story" className="w-full h-full object-cover" />
+              <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100">
+                <img 
+                  src="/images/hero-main.jpg" 
+                  alt="Our Story - Maruti Overseas Journey" 
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
               <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-xl p-6">
                 <div className="text-4xl font-bold text-primary-600">20+</div>
@@ -114,8 +148,7 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-
-      {/* Certificates */}
+      {/* Certificates - with optimized lazy loading */}
       <section className="section-padding bg-gray-50">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -126,25 +159,17 @@ const AboutPage = () => {
               Recognized and certified by leading international education organizations and authorities.
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6, 7].map((num) => (
               <div
                 key={num}
                 className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow group"
               >
-                <div className="aspect-[4/3] relative overflow-hidden bg-gray-100">
-                  {/* Loading placeholder */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="animate-pulse text-gray-400">
-                      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                  </div>
+                <div className="aspect-[4/3] relative overflow-hidden bg-gray-200">
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse" />
                   <img
                     src={`/images/certificates/${num}.jpg`}
-                    alt={`Certificate ${num}`}
+                    alt={`Certificate ${num} - Maruti Overseas`}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-contain relative z-10 group-hover:scale-105 transition-transform duration-500"
@@ -159,10 +184,8 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-
       {/* Testimonials */}
       <TestimonialsSection />
-
       {/* Stats */}
       <section className="py-16 bg-gray-50">
         <div className="container-custom">
@@ -194,7 +217,6 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-
       {/* Values */}
       <section className="section-padding bg-white">
         <div className="container-custom">
@@ -206,7 +228,6 @@ const AboutPage = () => {
               These principles guide everything we do at Maruti Overseas Consultancy.
             </p>
           </div>
-
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => {
               const Icon = value.icon;
@@ -226,7 +247,6 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-
       {/* Team */}
       <section className="section-padding bg-gray-50">
         <div className="container-custom">
@@ -238,7 +258,6 @@ const AboutPage = () => {
               Our experienced counselors are dedicated to helping you achieve your study abroad goals.
             </p>
           </div>
-
           <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {team.map((member, index) => (
               <div
@@ -256,5 +275,4 @@ const AboutPage = () => {
     </div>
   );
 };
-
 export default AboutPage;
