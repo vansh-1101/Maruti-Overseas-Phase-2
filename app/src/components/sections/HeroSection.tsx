@@ -1,4 +1,4 @@
-import { useState } from 'react';
+ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, GraduationCap, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 import { countries } from '@/data';
 import { submitFormToEmail } from '@/lib/emailService';
+import { ScrollingVideoReels } from '@/components/shared/ScrollingVideoReels';
 
 const HeroSection = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
@@ -67,10 +68,11 @@ const HeroSection = () => {
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
       </div>
 
-      <div className="container-custom w-full relative z-10 pt-32 pb-12 md:py-0">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Text */}
-          <div className="text-white space-y-6">
+      <div className="w-full max-w-[1536px] mx-auto relative z-10 pt-32 pb-12 md:pt-40 md:pb-16 px-4 md:px-8 lg:px-12 xl:px-16 lg:px-20">
+        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-12 lg:gap-16 items-stretch h-full">
+          {/* Left Column - Text & Form */}
+          <div className="flex flex-col justify-center gap-10 lg:pl-4 xl:pl-8">
+            <div className="text-white space-y-6">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               20+ Years of Excellence | 10,000+ Students Placed
@@ -81,7 +83,7 @@ const HeroSection = () => {
               <span className="text-secondary-300">Made Reality</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-white/90 max-w-xl">
+            <p className="text-xl md:text-2xl text-white/90 max-w-2xl leading-relaxed">
               Expert guidance for your international education journey. From university
               selection to visa approval, we're with you every step of the way.
             </p>
@@ -123,10 +125,10 @@ const HeroSection = () => {
                 <span className="text-sm">Free Counseling</span>
               </div>
             </div>
-          </div>
+            </div>
 
-          {/* Right Column - Quick Form */}
-          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8" id="lead-form">
+            {/* Quick Form (Moved to Left Column) */}
+            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-3xl" id="lead-form">
             <div className="text-center mb-6">
               <h3 className="text-xl font-semibold text-gray-900">
                 Start Your Journey
@@ -228,6 +230,12 @@ const HeroSection = () => {
                 </Link>
               </p>
             </form>
+          </div>
+          </div>
+
+          {/* Right Column - Video Reels */}
+          <div className="relative w-full h-[500px] lg:h-auto lg:min-h-[700px]">
+            <ScrollingVideoReels />
           </div>
         </div>
       </div>

@@ -72,27 +72,27 @@ const Navbar = () => {
           : 'bg-transparent py-4'
       )}
     >
-      <div className="container-custom">
+      <div className="w-full max-w-[1536px] mx-auto px-4 md:px-8 lg:px-12 xl:px-16 lg:px-20">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex-shrink-0 relative">
-              <div className="absolute inset-0 bg-white rounded-full blur-md opacity-20"></div>
+            <div className="flex-shrink-0 relative group cursor-pointer">
+              <div className="absolute inset-0 bg-white rounded-full blur-lg opacity-20 group-hover:opacity-60 transition-all duration-500 scale-110"></div>
               <img
                 src="/images/logo.jpg"
-                alt="Maruti Overseas Consultancy"
-                className="relative h-12 w-12 md:h-14 md:w-14 rounded-full object-cover border-2 border-white/90 shadow-lg"
+                alt="Maruti Overseas Consultancy Logo"
+                className="relative h-16 md:h-[72px] lg:h-[84px] w-16 md:w-[72px] lg:w-[84px] rounded-full object-cover shadow-[0_4px_20px_rgba(0,0,0,0.3)] border-2 border-primary-300/20 bg-white transform transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-0.5"
               />
             </div>
-            <div className="hidden sm:block">
+            <div className="hidden sm:block flex flex-col justify-center">
               <span className={cn(
-                'font-display font-bold text-lg leading-tight block',
+                'font-display font-bold text-[19px] leading-snug block',
                 isScrolled || isMobileMenuOpen ? 'text-gray-900' : 'text-white'
               )}>
                 Maruti Overseas Consultancy
               </span>
               <span className={cn(
-                "block text-xs font-medium italic",
+                "block text-[13px] font-medium italic mt-1",
                 isScrolled || isMobileMenuOpen ? "text-primary-600" : "text-white/80"
               )}>
                 Let's Make Career...
