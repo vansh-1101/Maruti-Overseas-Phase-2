@@ -9,9 +9,9 @@ export interface VideoReel {
 }
 
 export const reels: VideoReel[] = [
-  { id: 1, src: '/videos/reel1.mp4', title: 'Student Success Story', tag: 'Visa Approved 🎉' },
-  { id: 2, src: '/videos/reel2.mp4', title: 'Germany Student Visa', tag: 'Expert Counseling' },
-  { id: 3, src: '/videos/reel3.mp4', title: 'UK Student Visa', tag: 'Life Abroad' },
+  { id: 1, src: '/videos/reel1_web.mp4', title: 'Student Success Story', tag: 'Visa Approved 🎉' },
+  { id: 2, src: '/videos/reel2_web.mp4', title: 'Germany Student Visa', tag: 'Expert Counseling' },
+  { id: 3, src: '/videos/reel3_web.mp4', title: 'UK Student Visa', tag: 'Life Abroad' },
 ];
 
 export const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => void }) => {
