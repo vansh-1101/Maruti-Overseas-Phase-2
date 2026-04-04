@@ -10,15 +10,31 @@ interface VideoReel {
 }
 
 const reels: VideoReel[] = [
-  { id: 1, src: '/videos/reel1.mp4', title: 'Student Success Story', tag: 'Visa Approved 🎉' },
-  { id: 2, src: '/videos/reel2.mp4', title: 'Germany Student Visa', tag: 'Expert Counseling' },
-  { id: 3, src: '/videos/reel3.mp4', title: 'UK Student Visa', tag: 'Life Abroad' },
+  { id: 1, src: '/videos/reel1_web.mp4', title: 'Student Success Story', tag: 'Visa Approved 🎉' },
+  { id: 2, src: '/videos/reel2_web.mp4', title: 'Germany Student Visa', tag: 'Expert Counseling' },
+  { id: 3, src: '/videos/reel3_web.mp4', title: 'UK Student Visa', tag: 'Life Abroad' },
 ];
 
 /* ─── Video Modal ─── */
 const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => void }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(false);
+
+  // React has a known bug: muted={false} does NOT remove the muted HTML attribute.
+  // Fix: control muted exclusively via the DOM ref, never via JSX prop.
+  const videoRefCallback = useCallback((video: HTMLVideoElement | null) => {
+    if (!video) return;
+    // Unmute directly via DOM (bypasses React's broken muted prop handling)
+    video.muted = false;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Browser blocked unmuted autoplay — fall back to muted
+        video.muted = true;
+        setMuted(true);
+        video.play().catch(() => {});
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -26,6 +42,15 @@ const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => void })
     document.body.style.overflow = 'hidden';
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
   }, [onClose]);
+
+  const toggleMute = () => {
+    // Also toggle muted via DOM directly to avoid the React bug
+    const video = document.querySelector<HTMLVideoElement>('#modal-video');
+    if (video) {
+      video.muted = !muted;
+      setMuted(m => !m);
+    }
+  };
 
   return (
     <div
@@ -40,10 +65,14 @@ const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => void })
         onClick={e => e.stopPropagation()}
         style={{ position: 'relative', width: '100%', maxWidth: '360px', margin: '0 16px', aspectRatio: '9/16' }}
       >
+        {/* NOTE: Do NOT add muted prop here — React bug prevents removing it.
+            Mute is controlled purely via the ref callback above. */}
         <video
-          ref={videoRef}
+          id="modal-video"
+          ref={videoRefCallback}
           src={reel.src}
-          autoPlay playsInline loop muted={muted}
+          playsInline loop
+          preload="auto"
           style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '22px' }}
         />
         <div style={{
@@ -61,7 +90,7 @@ const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => void })
         <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {[
             { icon: <X size={18} />, action: onClose },
-            { icon: muted ? <VolumeX size={18} /> : <Volume2 size={18} />, action: () => { if (videoRef.current) { videoRef.current.muted = !muted; setMuted(m => !m); } } },
+            { icon: muted ? <VolumeX size={18} /> : <Volume2 size={18} />, action: toggleMute },
           ].map((btn, i) => (
             <button
               key={i}
@@ -83,11 +112,19 @@ const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => void })
 const ReelCard = ({ reel, onPlay }: { reel: VideoReel & { uid: string }; onPlay: (r: VideoReel) => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   const enter = useCallback(() => {
     setHovered(true);
-    videoRef.current?.play().catch(() => {});
-  }, []);
+    if (videoRef.current) {
+      // Load and play on hover if not yet loaded
+      if (!loaded) {
+        videoRef.current.load();
+        setLoaded(true);
+      }
+      videoRef.current.play().catch(() => {});
+    }
+  }, [loaded]);
 
   const leave = useCallback(() => {
     setHovered(false);
@@ -117,12 +154,21 @@ const ReelCard = ({ reel, onPlay }: { reel: VideoReel & { uid: string }; onPlay:
       <video
         ref={videoRef}
         src={reel.src}
-        muted playsInline loop preload="metadata"
+        muted playsInline loop preload="none"
         style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-          opacity: hovered ? 1 : 0.75, transition: 'opacity 0.3s',
+          opacity: hovered ? 1 : 0,
+          transition: 'opacity 0.3s',
         }}
       />
+      {/* Static thumbnail shown before hover */}
+      {!hovered && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(180deg, rgba(15,30,61,0.5) 0%, rgba(15,30,61,0.85) 100%)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }} />      
+      )}
       {/* Gradient overlay */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
