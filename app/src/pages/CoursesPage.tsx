@@ -1,261 +1,647 @@
-import { useState } from 'react';
-import { Search, Filter, Clock, GraduationCap, ArrowRight, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { useState, useMemo } from 'react';
+import { Search, ArrowRight, MapPin, Sparkles, BookOpen, GraduationCap, Globe } from 'lucide-react';
 import { trialCourses, foreignCourses } from '@/data';
 
-const CoursesPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedLevel, setSelectedLevel] = useState<string>('all');
+/* ─── Category tab config ─────────────────────────────────────────── */
+const TABS = [
+  { id: 'all',       label: 'All Courses',   icon: BookOpen },
+  { id: 'Exam Prep', label: 'Exam Prep',     icon: GraduationCap },
+  { id: 'Language Learning', label: 'Languages', icon: Sparkles },
+  { id: 'Skill Development', label: 'Skills', icon: Globe },
+  { id: 'foreign',   label: 'Abroad',        icon: MapPin },
+];
 
-  const allCourses = [...trialCourses, ...foreignCourses];
+/* ─── Gradient palette per category ──────────────────────────────── */
+const CATEGORY_COLORS: Record<string, { from: string; to: string; badge: string }> = {
+  'Exam Prep':        { from: '#1e3a5f', to: '#2d6a9f', badge: '#2d6a9f' },
+  'Language Learning':{ from: '#14532d', to: '#16a34a', badge: '#15803d' },
+  'Skill Development':{ from: '#4c1d95', to: '#7c3aed', badge: '#7c3aed' },
+  'Business':         { from: '#7c2d12', to: '#ea580c', badge: '#ea580c' },
+  'Technology':       { from: '#0f172a', to: '#334155', badge: '#475569' },
+  'Engineering':      { from: '#1e3a5f', to: '#0369a1', badge: '#0369a1' },
+  'Healthcare':       { from: '#064e3b', to: '#059669', badge: '#059669' },
+};
 
-  const filterCourses = (list: typeof trialCourses) => {
-    return list.filter((course) => {
-      const matchesSearch = course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (course.fullName?.toLowerCase() || '').includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
-      const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel;
-      return matchesSearch && matchesCategory && matchesLevel;
-    });
-  };
+const getColors = (category: string) =>
+  CATEGORY_COLORS[category] ?? { from: '#1e3a5f', to: '#2563eb', badge: '#2563eb' };
 
-  const filteredTrialCourses = filterCourses(trialCourses);
-  const filteredForeignCourses = filterCourses(foreignCourses);
+type AnyCoure = typeof trialCourses[0] | typeof foreignCourses[0];
 
-  const categories = [...new Set(allCourses.map((c) => c.category))];
-  const levels = [...new Set(allCourses.map((c) => c.level))];
+/* ─── Single Course Card ──────────────────────────────────────────── */
+const CourseCard = ({ course }: { course: AnyCoure }) => {
+  const { from, to, badge } = getColors(course.category);
+  const [imgError, setImgError] = useState(false);
 
-  const CourseCard = ({ course }: { course: typeof trialCourses[0] }) => (
-    <article
-      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full"
-    >
-      {/* Card Image */}
-      <div className="relative h-48 overflow-hidden bg-gray-100">
-        <img
-          src={course.image}
-          alt={course.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        <div className="absolute top-4 right-4">
-          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary-700 rounded-full text-xs font-bold shadow-sm">
-            {course.category}
-          </span>
-        </div>
+  return (
+    <article className="courses-card">
+      {/* Thumbnail */}
+      <div className="courses-card__thumb" style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}>
+        {!imgError ? (
+          <img
+            src={course.image}
+            alt={course.name}
+            className="courses-card__img"
+            loading="lazy"
+            decoding="async"
+            width={600}
+            height={338}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="courses-card__fallback">
+            <span>{course.name.slice(0, 2).toUpperCase()}</span>
+          </div>
+        )}
+        {/* Category badge */}
+        <span className="courses-card__badge" style={{ background: badge }}>
+          {course.category}
+        </span>
       </div>
 
-      <div className="p-6 flex-grow flex flex-col">
-        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-          {course.name}
-        </h3>
-        <p className="text-sm text-gray-500 mb-4 font-medium">
-          {course.fullName}
-        </p>
+      {/* Body */}
+      <div className="courses-card__body">
+        <h3 className="courses-card__title">{course.name}</h3>
+        {course.fullName && (
+          <p className="courses-card__subtitle">{course.fullName}</p>
+        )}
+        <p className="courses-card__desc">{course.description}</p>
 
-        <p className="text-gray-600 text-sm mb-6 line-clamp-3 flex-grow">
-          {course.description}
-        </p>
-
-        <div className="grid grid-cols-2 gap-4 text-sm text-gray-500 mb-6 py-4 border-t border-gray-50">
-          <span className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary-500" />
-            {course.duration}
-          </span>
-          <span className="flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-primary-500" />
-            {course.level}
-          </span>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Available In</p>
-          <div className="flex flex-wrap gap-2">
-            {course.countries?.map((country) => (
-              <div
-                key={country}
-                className="flex items-center gap-1 px-2.5 py-1 bg-gray-50 text-gray-600 rounded-md text-xs border border-gray-100"
-              >
-                <MapPin className="w-3 h-3 text-gray-400" />
-                {country}
-              </div>
-            ))}
+        {/* Countries */}
+        {course.countries && course.countries.length > 0 && (
+          <div className="courses-card__countries">
+            <MapPin size={11} />
+            {course.countries.slice(0, 3).join(' · ')}
+            {course.countries.length > 3 && ` +${course.countries.length - 3}`}
           </div>
-        </div>
+        )}
 
-        <Button
-          className="w-full bg-primary-50 text-primary-700 hover:bg-primary-600 hover:text-white transition-all duration-300 group-hover:shadow-md"
-          asChild
+        {/* CTA */}
+        <a
+          href="https://online.marutioverseas.in/register"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="courses-card__cta"
         >
-          <a
-            href="https://online.marutioverseas.in/register"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Enquire Now
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </a>
-        </Button>
+          Enquire Now <ArrowRight size={14} />
+        </a>
       </div>
     </article>
   );
+};
+
+/* ─── Page ────────────────────────────────────────────────────────── */
+const CoursesPage = () => {
+  const [search, setSearch] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
+
+  const allCourses: AnyCoure[] = useMemo(
+    () => [...trialCourses, ...foreignCourses],
+    []
+  );
+
+  const filtered = useMemo(() => {
+    let list = allCourses;
+
+    if (activeTab === 'foreign') {
+      list = foreignCourses as AnyCoure[];
+    } else if (activeTab !== 'all') {
+      list = allCourses.filter(c => c.category === activeTab);
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(
+        c =>
+          c.name.toLowerCase().includes(q) ||
+          (c.fullName ?? '').toLowerCase().includes(q) ||
+          c.category.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [allCourses, activeTab, search]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <section className="relative w-full min-h-[400px] md:h-[500px] overflow-hidden flex items-center bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700">
-        {/* World Map Background - Courses Variant */}
-        <div className="absolute inset-0 z-0 opacity-60 pointer-events-none">
-          <img
-            src="/images/courses-bg.svg"
-            alt=""
-            className="w-full h-full object-cover object-center"
-          />
-        </div>
+    <>
+      {/* ── Inline styles ── */}
+      <style>{`
+        /* ── Page shell ── */
+        .courses-page {
+          min-height: 100vh;
+          background: #f4f6fb;
+          font-family: 'Inter', 'Poppins', sans-serif;
+        }
 
-        {/* Text Visibility Overlay */}
-        <div className="absolute inset-0 z-0 bg-black/50" />
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/60 via-transparent to-transparent" />
+        /* ── Hero ── */
+        .courses-hero {
+          position: relative;
+          width: 100%;
+          min-height: 340px;
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+          background: linear-gradient(135deg, #0f2342 0%, #1a3e6e 50%, #0f5f8a 100%);
+        }
+        .courses-hero__bg {
+          position: absolute;
+          inset: 0;
+          opacity: 0.08;
+          background-image: radial-gradient(circle at 25% 50%, #60a5fa 0%, transparent 50%),
+                            radial-gradient(circle at 75% 20%, #a78bfa 0%, transparent 40%),
+                            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .courses-hero__wrap {
+          position: relative;
+          z-index: 2;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 100px 24px 48px;
+          width: 100%;
+        }
+        .courses-hero__pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: rgba(255,255,255,0.12);
+          border: 1px solid rgba(255,255,255,0.2);
+          color: #93c5fd;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          padding: 6px 14px;
+          border-radius: 100px;
+          margin-bottom: 20px;
+        }
+        .courses-hero__h1 {
+          font-size: clamp(2rem, 5vw, 3.2rem);
+          font-weight: 800;
+          color: #fff;
+          line-height: 1.15;
+          margin: 0 0 16px;
+        }
+        .courses-hero__h1 span {
+          background: linear-gradient(90deg, #60a5fa, #a78bfa);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .courses-hero__sub {
+          font-size: clamp(0.95rem, 2vw, 1.1rem);
+          color: rgba(255,255,255,0.72);
+          max-width: 550px;
+          margin: 0;
+          line-height: 1.6;
+        }
+        .courses-hero__stats {
+          display: flex;
+          gap: 32px;
+          margin-top: 32px;
+          flex-wrap: wrap;
+        }
+        .courses-hero__stat {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+        .courses-hero__stat-num {
+          font-size: 1.6rem;
+          font-weight: 800;
+          color: #fff;
+        }
+        .courses-hero__stat-label {
+          font-size: 0.75rem;
+          color: rgba(255,255,255,0.55);
+          font-weight: 500;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
 
-        <div className="container-custom relative z-10 pt-32 pb-12 md:pt-0 md:pb-0">
-          <div className="max-w-3xl">
-            <span className="inline-block px-4 py-1.5 bg-white/10 text-white rounded-full text-sm font-medium mb-4">
-              Course Finder
-            </span>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
-              Find Your Perfect Course
-            </h1>
-            <p className="text-xl text-white/90">
-              Explore our language preparation and foreign education programs.
-              Filter by category, level, and destination.
+        /* ── Sticky toolbar ── */
+        .courses-toolbar {
+          position: sticky;
+          top: 68px;
+          z-index: 40;
+          background: #fff;
+          border-bottom: 1px solid #e5e9f0;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        .courses-toolbar__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+        /* Search row */
+        .courses-toolbar__search-row {
+          padding: 14px 0 0;
+        }
+        .courses-search {
+          position: relative;
+          max-width: 480px;
+        }
+        .courses-search__icon {
+          position: absolute;
+          left: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #94a3b8;
+          pointer-events: none;
+        }
+        .courses-search input {
+          width: 100%;
+          padding: 11px 16px 11px 42px;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 0.9rem;
+          color: #1e293b;
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s;
+          background: #f8fafc;
+        }
+        .courses-search input:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+          background: #fff;
+        }
+
+        /* Tabs row */
+        .courses-tabs {
+          display: flex;
+          gap: 4px;
+          padding: 10px 0 0;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .courses-tabs::-webkit-scrollbar { display: none; }
+        .courses-tab {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 18px;
+          border-radius: 10px 10px 0 0;
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: #64748b;
+          cursor: pointer;
+          border: none;
+          background: transparent;
+          white-space: nowrap;
+          transition: color 0.18s, background 0.18s;
+          position: relative;
+        }
+        .courses-tab:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 10%;
+          width: 80%;
+          height: 2px;
+          border-radius: 2px 2px 0 0;
+          background: transparent;
+          transition: background 0.18s;
+        }
+        .courses-tab:hover { color: #1e293b; background: #f1f5f9; }
+        .courses-tab.active {
+          color: #2563eb;
+          background: #eff6ff;
+        }
+        .courses-tab.active:after { background: #2563eb; }
+
+        /* ── Grid section ── */
+        .courses-section {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 36px 24px 64px;
+        }
+        .courses-section__header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 28px;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        .courses-section__title {
+          font-size: 1.35rem;
+          font-weight: 800;
+          color: #0f172a;
+        }
+        .courses-section__count {
+          font-size: 0.82rem;
+          color: #64748b;
+          background: #fff;
+          padding: 6px 14px;
+          border-radius: 100px;
+          border: 1.5px solid #e2e8f0;
+          font-weight: 600;
+        }
+        .courses-section__count span {
+          color: #2563eb;
+        }
+
+        /* Grid */
+        .courses-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+        }
+
+        /* ── Card ── */
+        .courses-card {
+          background: #fff;
+          border-radius: 16px;
+          overflow: hidden;
+          border: 1px solid #e8edf5;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+          display: flex;
+          flex-direction: column;
+          transition: transform 0.22s, box-shadow 0.22s;
+          cursor: pointer;
+        }
+        .courses-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+        }
+
+        /* Thumb */
+        .courses-card__thumb {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16/9;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .courses-card__img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.4s;
+        }
+        .courses-card:hover .courses-card__img {
+          transform: scale(1.05);
+        }
+        .courses-card__fallback {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .courses-card__fallback span {
+          font-size: 2.5rem;
+          font-weight: 900;
+          color: rgba(255,255,255,0.4);
+        }
+        .courses-card__badge {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          padding: 3px 10px;
+          border-radius: 100px;
+          font-size: 0.65rem;
+          font-weight: 700;
+          color: #fff;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          backdrop-filter: blur(4px);
+        }
+
+        /* Body */
+        .courses-card__body {
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          flex: 1;
+        }
+        .courses-card__title {
+          font-size: 0.97rem;
+          font-weight: 700;
+          color: #0f172a;
+          line-height: 1.3;
+          margin: 0;
+        }
+        .courses-card__subtitle {
+          font-size: 0.75rem;
+          color: #94a3b8;
+          margin: 0;
+          font-weight: 500;
+        }
+        .courses-card__desc {
+          font-size: 0.76rem;
+          color: #64748b;
+          line-height: 1.55;
+          margin: 4px 0 6px;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .courses-card__countries {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 0.7rem;
+          color: #94a3b8;
+          font-weight: 500;
+          margin-top: auto;
+          padding-top: 6px;
+          border-top: 1px solid #f1f5f9;
+        }
+        .courses-card__cta {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin-top: 12px;
+          padding: 9px 0;
+          background: #eff6ff;
+          color: #2563eb;
+          font-size: 0.8rem;
+          font-weight: 700;
+          border-radius: 10px;
+          text-decoration: none;
+          transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+          letter-spacing: 0.02em;
+        }
+        .courses-card__cta:hover {
+          background: #2563eb;
+          color: #fff;
+          box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+        }
+
+        /* ── Empty state ── */
+        .courses-empty {
+          text-align: center;
+          padding: 80px 24px;
+          background: #fff;
+          border-radius: 20px;
+          border: 1.5px dashed #e2e8f0;
+        }
+        .courses-empty__icon {
+          width: 72px;
+          height: 72px;
+          background: #f1f5f9;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 20px;
+          color: #94a3b8;
+        }
+        .courses-empty h3 {
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0 0 8px;
+        }
+        .courses-empty p {
+          color: #64748b;
+          font-size: 0.9rem;
+          margin: 0 auto 20px;
+          max-width: 360px;
+        }
+        .courses-empty__btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 24px;
+          background: #2563eb;
+          color: #fff;
+          border: none;
+          border-radius: 10px;
+          font-size: 0.88rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.18s;
+        }
+        .courses-empty__btn:hover { background: #1d4ed8; }
+
+        /* ── Responsive ── */
+        @media (max-width: 1100px) {
+          .courses-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 780px) {
+          .courses-hero__wrap { padding: 90px 16px 40px; }
+          .courses-hero__stats { gap: 20px; }
+          .courses-toolbar__inner { padding: 0 16px; }
+          .courses-search { max-width: 100%; }
+          .courses-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+          }
+          .courses-section { padding: 24px 16px 48px; }
+          .courses-card__body { padding: 12px; }
+          .courses-card__title { font-size: 0.88rem; }
+          .courses-card__desc { display: none; }
+        }
+        @media (max-width: 420px) {
+          .courses-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+          .courses-tab { font-size: 0.75rem; padding: 7px 12px; }
+        }
+      `}</style>
+
+      <div className="courses-page">
+        {/* ── Hero ── */}
+        <section className="courses-hero">
+          <div className="courses-hero__bg" />
+          <div className="courses-hero__wrap">
+            <p className="courses-hero__pill">
+              <Sparkles size={12} /> Maruti Overseas · Course Finder
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Filters */}
-      <section className="py-8 bg-white border-b border-gray-200 sticky top-[72px] z-30 shadow-sm">
-        <div className="container-custom">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search courses..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 py-6"
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full sm:w-[180px] h-12">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-                <SelectTrigger className="w-full sm:w-[180px] h-12">
-                  <GraduationCap className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Levels</SelectItem>
-                  {levels.map((level) => (
-                    <SelectItem key={level} value={level}>
-                      {level}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trial Courses Grid (Main) */}
-      <section className="section-padding">
-        <div className="container-custom">
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">
-              Featured Programs & Trials
-            </h2>
-            <div className="text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100">
-              Showing <span className="font-bold text-primary-600">{filteredTrialCourses.length}</span> programs
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredTrialCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
-
-          {filteredTrialCourses.length === 0 && filteredForeignCourses.length === 0 && (
-            <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
-              <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Search className="w-10 h-10 text-gray-300" />
+            <h1 className="courses-hero__h1">
+              Explore Our <span>Expert-Led</span><br />Courses & Programs
+            </h1>
+            <p className="courses-hero__sub">
+              From IELTS, PTE and GMAT to French, German and global degree programs —
+              everything you need to study abroad.
+            </p>
+            <div className="courses-hero__stats">
+              <div className="courses-hero__stat">
+                <span className="courses-hero__stat-num">{trialCourses.length + foreignCourses.length}+</span>
+                <span className="courses-hero__stat-label">Courses</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                No courses found
-              </h3>
-              <p className="text-gray-500 max-w-md mx-auto">
-                We couldn't find any courses matching your criteria. Try adjusting your filters or search terms.
-              </p>
-              <Button
-                variant="outline"
-                className="mt-6"
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('all');
-                  setSelectedLevel('all');
-                }}
-              >
-                Clear all filters
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Foreign Courses Grid (Secondary) */}
-      {filteredForeignCourses.length > 0 && (
-        <section className="section-padding bg-white border-t border-gray-100">
-          <div className="container-custom">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Explore Foreign Courses
-              </h2>
-              <p className="text-gray-500">
-                Discover academic programs at top universities worldwide.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredForeignCourses.map((course) => (
-                <CourseCard key={course.id} course={course} />
-              ))}
+              <div className="courses-hero__stat">
+                <span className="courses-hero__stat-num">10+</span>
+                <span className="courses-hero__stat-label">Destinations</span>
+              </div>
+              <div className="courses-hero__stat">
+                <span className="courses-hero__stat-num">15k+</span>
+                <span className="courses-hero__stat-label">Students Placed</span>
+              </div>
             </div>
           </div>
         </section>
-      )}
-    </div>
+
+        {/* ── Sticky Toolbar ── */}
+        <div className="courses-toolbar">
+          <div className="courses-toolbar__inner">
+            <div className="courses-toolbar__search-row">
+              <div className="courses-search">
+                <Search size={16} className="courses-search__icon" />
+                <input
+                  type="text"
+                  placeholder="Search courses, exams, languages…"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  aria-label="Search courses"
+                />
+              </div>
+            </div>
+            <div className="courses-tabs" role="tablist">
+              {TABS.map(tab => (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  className={`courses-tab${activeTab === tab.id ? ' active' : ''}`}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  <tab.icon size={13} />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Course Grid ── */}
+        <section className="courses-section">
+          <div className="courses-section__header">
+            <h2 className="courses-section__title">
+              {TABS.find(t => t.id === activeTab)?.label ?? 'All Courses'}
+            </h2>
+            <span className="courses-section__count">
+              <span>{filtered.length}</span> {filtered.length === 1 ? 'course' : 'courses'} found
+            </span>
+          </div>
+
+          {filtered.length > 0 ? (
+            <div className="courses-grid">
+              {filtered.map(course => (
+                <CourseCard key={course.id} course={course} />
+              ))}
+            </div>
+          ) : (
+            <div className="courses-empty">
+              <div className="courses-empty__icon">
+                <Search size={28} />
+              </div>
+              <h3>No courses found</h3>
+              <p>Try adjusting your search or switching to a different category tab.</p>
+              <button
+                className="courses-empty__btn"
+                onClick={() => { setSearch(''); setActiveTab('all'); }}
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+        </section>
+      </div>
+    </>
   );
 };
 
