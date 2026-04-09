@@ -45,10 +45,13 @@ const Navbar = () => {
     {
       label: 'Services',
       href: '/services',
-      dropdown: services.slice(0, 6).map(s => ({
-        label: s.name,
-        href: `/services/${s.slug}`,
-      })),
+      dropdown: services
+        .filter(s => s.slug !== 'immigration')
+        .slice(0, 6)
+        .map(s => ({
+          label: s.name,
+          href: `/services/${s.slug}`,
+        })),
     },
     { label: 'Courses', href: '/courses' },
     {

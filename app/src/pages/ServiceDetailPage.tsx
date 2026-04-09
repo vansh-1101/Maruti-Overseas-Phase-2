@@ -170,7 +170,7 @@ const ServiceDetailPage = () => {
                       { name: 'Student Visa', slug: 'student-visa' },
                       { name: 'Test Preparation', slug: 'test-prep' },
                       { name: 'Scholarship Assistance', slug: 'scholarships' },
-                      { name: 'Immigration Services', slug: 'immigration' },
+                      { name: 'Air Ticketing', slug: 'air-tickets' },
                     ]
                       .filter(s => s.slug !== service.slug)
                       .slice(0, 4)

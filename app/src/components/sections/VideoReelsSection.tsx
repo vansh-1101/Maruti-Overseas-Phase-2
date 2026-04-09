@@ -1,141 +1,112 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, X, Volume2, VolumeX, ArrowRight } from 'lucide-react';
+import { Play, X, ArrowRight } from 'lucide-react';
 
+/* ─── Types ─── */
 interface VideoReel {
   id: number;
-  src: string;
+  youtubeId: string;
   title: string;
   tag: string;
 }
 
+/* ─── Data: swap only youtubeId to change videos ─── */
 const reels: VideoReel[] = [
-  { id: 1, src: '/videos/reel1_web.mp4', title: 'Student Success Story', tag: 'Visa Approved 🎉' },
-  { id: 2, src: '/videos/reel2.mp4', title: 'Germany Student Visa', tag: 'Expert Counseling' },
-  { id: 3, src: '/videos/reel3.mp4', title: 'UK Student Visa', tag: 'Life Abroad' },
+  { id: 1, youtubeId: '-epQAop67X4', title: 'Student Success Story',  tag: 'Visa Approved 🎉'  },
+  { id: 2, youtubeId: 'qPDzO85BibY', title: 'Germany Student Visa',   tag: 'Expert Counseling' },
+  { id: 3, youtubeId: 'ivg7RQaw9rY', title: 'UK Student Visa',        tag: 'Life Abroad'       },
 ];
+
+/* ─── Helpers ─── */
+/** Best-quality YouTube thumbnail (falls back to hqdefault if maxres missing). */
+const ytThumb = (id: string) =>
+  `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+
+/** Embed URL with autoplay + shorts-friendly params. */
+const ytEmbed = (id: string) =>
+  `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
 
 /* ─── Video Modal ─── */
 const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => void }) => {
-  const [muted, setMuted] = useState(false);
-
-  // React has a known bug: muted={false} does NOT remove the muted HTML attribute.
-  // Fix: control muted exclusively via the DOM ref, never via JSX prop.
-  const videoRefCallback = useCallback((video: HTMLVideoElement | null) => {
-    if (!video) return;
-    // Unmute directly via DOM (bypasses React's broken muted prop handling)
-    video.muted = false;
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // Browser blocked unmuted autoplay — fall back to muted
-        video.muted = true;
-        setMuted(true);
-        video.play().catch(() => {});
-      });
-    }
-  }, []);
-
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
-    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
   }, [onClose]);
-
-  const toggleMute = () => {
-    // Also toggle muted via DOM directly to avoid the React bug
-    const video = document.querySelector<HTMLVideoElement>('#modal-video');
-    if (video) {
-      video.muted = !muted;
-      setMuted(m => !m);
-    }
-  };
 
   return (
     <div
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 200,
-        background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(10px)',
+        background: 'rgba(0,0,0,0.90)', backdropFilter: 'blur(12px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
     >
       <div
         onClick={e => e.stopPropagation()}
-        style={{ position: 'relative', width: '100%', maxWidth: '360px', margin: '0 16px', aspectRatio: '9/16' }}
+        style={{
+          position: 'relative',
+          width: '100%', maxWidth: '360px',
+          margin: '0 16px',
+          aspectRatio: '9/16',
+          borderRadius: '22px',
+          overflow: 'hidden',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+        }}
       >
-        {/* NOTE: Do NOT add muted prop here — React bug prevents removing it.
-            Mute is controlled purely via the ref callback above. */}
-        <video
-          id="modal-video"
-          ref={videoRefCallback}
-          src={reel.src}
-          playsInline loop
-          preload="auto"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '22px' }}
+        {/*
+          allow="autoplay" is required — without it Chrome blocks autoplay inside iframes.
+          Loading is nearly instant because YouTube streams the Short progressively.
+        */}
+        <iframe
+          src={ytEmbed(reel.youtubeId)}
+          title={reel.title}
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+          allowFullScreen
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            border: 'none',
+          }}
         />
-        <div style={{
-          position: 'absolute', inset: 0, borderRadius: '22px', pointerEvents: 'none',
-          background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 40%)',
-        }} />
-        <div style={{ position: 'absolute', bottom: 20, left: 20, right: 56 }}>
-          <span style={{
-            display: 'inline-block', padding: '4px 12px', borderRadius: '999px',
-            background: 'rgba(37,99,235,0.85)', color: '#fff', fontSize: '12px',
-            fontWeight: 700, marginBottom: '8px',
-          }}>{reel.tag}</span>
-          <p style={{ color: '#fff', fontWeight: 700, fontSize: '17px', lineHeight: 1.3 }}>{reel.title}</p>
-        </div>
-        <div style={{ position: 'absolute', top: 16, right: 16, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {[
-            { icon: <X size={18} />, action: onClose },
-            { icon: muted ? <VolumeX size={18} /> : <Volume2 size={18} />, action: toggleMute },
-          ].map((btn, i) => (
-            <button
-              key={i}
-              onClick={btn.action}
-              style={{
-                width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer',
-                background: 'rgba(0,0,0,0.55)', color: '#fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-            >{btn.icon}</button>
-          ))}
-        </div>
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: 14, right: 14,
+            width: 40, height: 40, borderRadius: '50%', border: 'none',
+            cursor: 'pointer', background: 'rgba(0,0,0,0.55)', color: '#fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 10,
+          }}
+        >
+          <X size={18} />
+        </button>
       </div>
     </div>
   );
 };
 
-/* ─── Single Reel Card ─── */
-const ReelCard = ({ reel, onPlay }: { reel: VideoReel & { uid: string }; onPlay: (r: VideoReel) => void }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+/* ─── Single Reel Card — thumbnail only, zero video download ─── */
+interface ReelCardProps {
+  reel: VideoReel & { uid: string };
+  onPlay: (r: VideoReel) => void;
+}
+
+const ReelCard = ({ reel, onPlay }: ReelCardProps) => {
   const [hovered, setHovered] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-
-  const enter = useCallback(() => {
-    setHovered(true);
-    if (videoRef.current) {
-      // Load and play on hover if not yet loaded
-      if (!loaded) {
-        videoRef.current.load();
-        setLoaded(true);
-      }
-      videoRef.current.play().catch(() => {});
-    }
-  }, [loaded]);
-
-  const leave = useCallback(() => {
-    setHovered(false);
-    if (videoRef.current) { videoRef.current.pause(); videoRef.current.currentTime = 0; }
-  }, []);
 
   return (
     <div
-      onMouseEnter={enter}
-      onMouseLeave={leave}
       onClick={() => onPlay(reel)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         position: 'relative',
         borderRadius: '18px',
@@ -151,36 +122,37 @@ const ReelCard = ({ reel, onPlay }: { reel: VideoReel & { uid: string }; onPlay:
         transition: 'transform 0.3s ease, box-shadow 0.3s ease',
       }}
     >
-      <video
-        ref={videoRef}
-        src={reel.src}
-        muted playsInline loop preload="none"
+      {/* YouTube thumbnail — loads as a plain <img>, instant and lightweight */}
+      <img
+        src={ytThumb(reel.youtubeId)}
+        alt={reel.title}
+        loading="lazy"
+        decoding="async"
         style={{
-          position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-          opacity: hovered ? 1 : 0,
-          transition: 'opacity 0.3s',
+          position: 'absolute', inset: 0,
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+          /* hqdefault is 4:3 — center-crop to fill the 9:16 card */
+          objectPosition: 'center center',
+          transition: 'transform 0.4s ease',
+          transform: hovered ? 'scale(1.06)' : 'scale(1)',
         }}
       />
-      {/* Static thumbnail shown before hover */}
-      {!hovered && (
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(180deg, rgba(15,30,61,0.5) 0%, rgba(15,30,61,0.85) 100%)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }} />      
-      )}
+
       {/* Gradient overlay */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)',
+        background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.15) 50%, transparent 100%)',
       }} />
+
       {/* Blue tint on idle */}
       {!hovered && (
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(135deg, rgba(37,99,235,0.25) 0%, transparent 60%)',
+          background: 'linear-gradient(135deg, rgba(37,99,235,0.22) 0%, transparent 60%)',
         }} />
       )}
+
       {/* Tag */}
       <div style={{ position: 'absolute', top: 12, left: 12 }}>
         <span style={{
@@ -190,6 +162,19 @@ const ReelCard = ({ reel, onPlay }: { reel: VideoReel & { uid: string }; onPlay:
           color: '#fff', fontSize: '11px', fontWeight: 700,
         }}>{reel.tag}</span>
       </div>
+
+      {/* YouTube logo badge */}
+      <div style={{
+        position: 'absolute', top: 12, right: 12,
+        background: 'rgba(0,0,0,0.6)', borderRadius: '6px',
+        padding: '3px 7px', display: 'flex', alignItems: 'center', gap: '4px',
+      }}>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+          <path d="M15.67 1.72A2 2 0 0 0 14.26.3C13.01 0 8 0 8 0S2.99 0 1.74.3A2 2 0 0 0 .33 1.72C0 2.98 0 5.5 0 5.5s0 2.52.33 3.78A2 2 0 0 0 1.74 10.7C2.99 11 8 11 8 11s5.01 0 6.26-.3a2 2 0 0 0 1.41-1.42C16 8.02 16 5.5 16 5.5s0-2.52-.33-3.78z" fill="#FF0000"/>
+          <path d="M6.4 7.86V3.14l4.27 2.36-4.27 2.36z" fill="#FFFFFF"/>
+        </svg>
+      </div>
+
       {/* Play button */}
       <div style={{
         position: 'absolute', top: '50%', left: '50%',
@@ -206,6 +191,7 @@ const ReelCard = ({ reel, onPlay }: { reel: VideoReel & { uid: string }; onPlay:
           <Play size={20} style={{ color: '#1d4ed8', fill: '#1d4ed8', marginLeft: 3 }} />
         </div>
       </div>
+
       {/* Bottom label */}
       <div style={{ position: 'absolute', bottom: 14, left: 14, right: 14 }}>
         <p style={{ color: '#fff', fontWeight: 700, fontSize: '14px', lineHeight: 1.35 }}>{reel.title}</p>
@@ -221,20 +207,15 @@ const InfiniteScrollColumn = ({ items, onPlay, speed = 40 }: {
   onPlay: (r: VideoReel) => void;
   speed?: number;
 }) => {
-  // Duplicate for seamless loop
   const doubled = [...items, ...items];
 
   return (
     <div style={{ overflow: 'hidden', height: '100%', width: '100%' }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '14px',
-          animation: `scrollUp ${speed}s linear infinite`,
-          willChange: 'transform',
-        }}
-      >
+      <div style={{
+        display: 'flex', flexDirection: 'column', gap: '14px',
+        animation: `scrollUp ${speed}s linear infinite`,
+        willChange: 'transform',
+      }}>
         {doubled.map((reel, i) => (
           <ReelCard key={`${reel.uid}-${i}`} reel={reel} onPlay={onPlay} />
         ))}
@@ -280,15 +261,10 @@ const VideoReelsSection = () => {
           display: flex;
           gap: 14px;
           padding: 0;
-          /* mask so cards fade at top & bottom */
           mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
           -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
         }
-        .vrs-col {
-          flex: 1;
-          min-width: 0;
-        }
-        /* Decorative glow behind left content */
+        .vrs-col { flex: 1; min-width: 0; }
         .vrs-glow {
           position: absolute;
           border-radius: 50%;
@@ -308,16 +284,8 @@ const VideoReelsSection = () => {
 
       <section className="vrs-section" id="video-reels">
         {/* Decorative blobs */}
-        <div className="vrs-glow" style={{
-          width: 480, height: 480,
-          background: 'rgba(37,99,235,0.12)',
-          top: '-80px', left: '-80px',
-        }} />
-        <div className="vrs-glow" style={{
-          width: 320, height: 320,
-          background: 'rgba(20,184,166,0.08)',
-          bottom: '-60px', left: '30%',
-        }} />
+        <div className="vrs-glow" style={{ width: 480, height: 480, background: 'rgba(37,99,235,0.12)', top: '-80px', left: '-80px' }} />
+        <div className="vrs-glow" style={{ width: 320, height: 320, background: 'rgba(20,184,166,0.08)', bottom: '-60px', left: '30%' }} />
 
         {/* ── LEFT: Content ── */}
         <div className="vrs-left">
@@ -359,10 +327,7 @@ const VideoReelsSection = () => {
           </h2>
 
           {/* Sub-text */}
-          <p style={{
-            fontSize: '17px', lineHeight: 1.75,
-            color: '#94a3b8', maxWidth: '440px', marginBottom: '36px',
-          }}>
+          <p style={{ fontSize: '17px', lineHeight: 1.75, color: '#94a3b8', maxWidth: '440px', marginBottom: '36px' }}>
             Watch quick success stories, counseling moments, and study abroad tips from our
             students now living their dreams overseas.
           </p>
@@ -378,8 +343,8 @@ const VideoReelsSection = () => {
           }}>
             {[
               { num: '5000+', label: 'Students Sent' },
-              { num: '15+', label: 'Countries' },
-              { num: '98%', label: 'Visa Success' },
+              { num: '15+',   label: 'Countries'     },
+              { num: '98%',   label: 'Visa Success'  },
             ].map((s, i) => (
               <div key={s.label} style={{
                 flex: 1, padding: '20px 16px',
@@ -387,12 +352,8 @@ const VideoReelsSection = () => {
                 textAlign: 'center',
                 borderRight: i < 2 ? '1px solid rgba(255,255,255,0.07)' : 'none',
               }}>
-                <div style={{ fontSize: '24px', fontWeight: 800, color: '#3b82f6', fontFamily: 'var(--font-display)' }}>
-                  {s.num}
-                </div>
-                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '3px', fontWeight: 500 }}>
-                  {s.label}
-                </div>
+                <div style={{ fontSize: '24px', fontWeight: 800, color: '#3b82f6', fontFamily: 'var(--font-display)' }}>{s.num}</div>
+                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '3px', fontWeight: 500 }}>{s.label}</div>
               </div>
             ))}
           </div>

@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import WhatsAppButton from '@/components/shared/WhatsAppButton';
-import LeadPopup from '@/components/shared/LeadPopup';
+
 
 const MainLayout = () => {
   return (
@@ -13,7 +13,7 @@ const MainLayout = () => {
       </main>
       <Footer />
       <WhatsAppButton />
-      <LeadPopup />
+
     </div>
   );
 };

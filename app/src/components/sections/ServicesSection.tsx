@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, GraduationCap, Plane, Home, BookOpen, Award, Banknote } from 'lucide-react';
+import { ArrowRight, GraduationCap, Plane, BookOpen, Award, Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const services = [
@@ -22,15 +22,8 @@ const services = [
     lightColor: 'bg-emerald-50',
     shadowColor: 'shadow-emerald-200',
   },
-  {
-    id: 'immigration',
-    name: 'Immigration',
-    description: 'Permanent residency and work visa assistance for Canada, Australia.',
-    icon: Home,
-    color: 'from-purple-500 to-purple-600',
-    lightColor: 'bg-purple-50',
-    shadowColor: 'shadow-purple-200',
-  },
+
+
   {
     id: 'test-prep',
     name: 'Test Preparation',
