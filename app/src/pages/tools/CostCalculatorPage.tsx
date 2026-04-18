@@ -1,11 +1,84 @@
 import { useState } from 'react';
-import { Calculator, DollarSign, Home, Plane, Book, ShoppingBag } from 'lucide-react';
+import { Calculator, DollarSign, Home, Plane, Book, ShoppingBag, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { countries } from '@/data';
 import { generateWhatsAppLink } from '@/lib/utils';
 
+/* ─── Program Levels ─── */
+const PROGRAM_LEVELS = [
+    { id: 'ug', label: 'UG (Bachelor\'s)', duration: 3 },
+    { id: 'pg', label: 'PG (Master\'s)', duration: 2 },
+    { id: 'diploma', label: 'Diploma / Certificate', duration: 1 },
+    { id: 'phd', label: 'PhD / Doctorate', duration: 4 },
+];
+
+/* ─── Cost defaults: country → program → values ─── */
+const COST_DATA: Record<string, Record<string, { tuition: number; accommodation: number; food: number; transport: number; misc: number }>> = {
+    'USA': {
+        ug:      { tuition: 25000, accommodation: 12000, food: 3600, transport: 1200, misc: 2500 },
+        pg:      { tuition: 35000, accommodation: 14000, food: 4000, transport: 1400, misc: 2800 },
+        diploma: { tuition: 15000, accommodation: 10000, food: 3200, transport: 1000, misc: 2000 },
+        phd:     { tuition: 5000,  accommodation: 14000, food: 4000, transport: 1400, misc: 2500 },
+    },
+    'UK': {
+        ug:      { tuition: 18000, accommodation: 9000,  food: 2800, transport: 900,  misc: 2000 },
+        pg:      { tuition: 25000, accommodation: 11000, food: 3200, transport: 1100, misc: 2500 },
+        diploma: { tuition: 12000, accommodation: 8000,  food: 2500, transport: 800,  misc: 1800 },
+        phd:     { tuition: 4000,  accommodation: 11000, food: 3200, transport: 1100, misc: 2200 },
+    },
+    'Canada': {
+        ug:      { tuition: 18000, accommodation: 8500,  food: 2800, transport: 900,  misc: 2000 },
+        pg:      { tuition: 24000, accommodation: 10000, food: 3200, transport: 1100, misc: 2500 },
+        diploma: { tuition: 14000, accommodation: 7500,  food: 2500, transport: 800,  misc: 1800 },
+        phd:     { tuition: 3000,  accommodation: 10000, food: 3200, transport: 1100, misc: 2200 },
+    },
+    'Australia': {
+        ug:      { tuition: 22000, accommodation: 10000, food: 3200, transport: 1100, misc: 2200 },
+        pg:      { tuition: 30000, accommodation: 12000, food: 3800, transport: 1300, misc: 2800 },
+        diploma: { tuition: 16000, accommodation: 9000,  food: 2800, transport: 1000, misc: 2000 },
+        phd:     { tuition: 4000,  accommodation: 12000, food: 3800, transport: 1300, misc: 2500 },
+    },
+    'Germany': {
+        ug:      { tuition: 500,   accommodation: 7000,  food: 2400, transport: 700,  misc: 1500 },
+        pg:      { tuition: 1500,  accommodation: 8000,  food: 2800, transport: 800,  misc: 1800 },
+        diploma: { tuition: 3000,  accommodation: 6500,  food: 2200, transport: 600,  misc: 1300 },
+        phd:     { tuition: 0,     accommodation: 8000,  food: 2800, transport: 800,  misc: 1500 },
+    },
+    'Ireland': {
+        ug:      { tuition: 14000, accommodation: 8000,  food: 2800, transport: 900,  misc: 1800 },
+        pg:      { tuition: 20000, accommodation: 10000, food: 3200, transport: 1000, misc: 2200 },
+        diploma: { tuition: 10000, accommodation: 7000,  food: 2500, transport: 800,  misc: 1500 },
+        phd:     { tuition: 3000,  accommodation: 10000, food: 3200, transport: 1000, misc: 2000 },
+    },
+    'New Zealand': {
+        ug:      { tuition: 18000, accommodation: 9000,  food: 3000, transport: 900,  misc: 2000 },
+        pg:      { tuition: 24000, accommodation: 11000, food: 3400, transport: 1100, misc: 2500 },
+        diploma: { tuition: 12000, accommodation: 8000,  food: 2600, transport: 800,  misc: 1800 },
+        phd:     { tuition: 4000,  accommodation: 11000, food: 3400, transport: 1100, misc: 2200 },
+    },
+    'South Korea': {
+        ug:      { tuition: 6000,  accommodation: 5500,  food: 2400, transport: 700,  misc: 1500 },
+        pg:      { tuition: 10000, accommodation: 7000,  food: 2800, transport: 900,  misc: 1800 },
+        diploma: { tuition: 4000,  accommodation: 5000,  food: 2200, transport: 600,  misc: 1200 },
+        phd:     { tuition: 2000,  accommodation: 7000,  food: 2800, transport: 900,  misc: 1500 },
+    },
+    'Dubai': {
+        ug:      { tuition: 15000, accommodation: 10000, food: 3500, transport: 1200, misc: 2500 },
+        pg:      { tuition: 22000, accommodation: 13000, food: 4200, transport: 1500, misc: 3000 },
+        diploma: { tuition: 10000, accommodation: 9000,  food: 3000, transport: 1000, misc: 2000 },
+        phd:     { tuition: 5000,  accommodation: 13000, food: 4200, transport: 1500, misc: 2800 },
+    },
+    'Singapore': {
+        ug:      { tuition: 18000, accommodation: 11000, food: 4000, transport: 1000, misc: 2200 },
+        pg:      { tuition: 26000, accommodation: 14000, food: 4800, transport: 1300, misc: 2800 },
+        diploma: { tuition: 12000, accommodation: 10000, food: 3500, transport: 900,  misc: 2000 },
+        phd:     { tuition: 4000,  accommodation: 14000, food: 4800, transport: 1300, misc: 2500 },
+    },
+};
+
 const CostCalculatorPage = () => {
     const [selectedCountry, setSelectedCountry] = useState('');
+    const [selectedProgram, setSelectedProgram] = useState('');
     const [duration, setDuration] = useState(1);
     const [tuition, setTuition] = useState('');
     const [accommodation, setAccommodation] = useState('');
@@ -13,26 +86,29 @@ const CostCalculatorPage = () => {
     const [transport, setTransport] = useState('');
     const [miscellaneous, setMiscellaneous] = useState('');
 
-    const countryDefaults: Record<string, { tuition: number; accommodation: number; food: number; transport: number }> = {
-        'USA': { tuition: 30000, accommodation: 12000, food: 3600, transport: 1200 },
-        'UK': { tuition: 25000, accommodation: 10000, food: 3000, transport: 1000 },
-        'Canada': { tuition: 20000, accommodation: 9000, food: 3000, transport: 1000 },
-        'Australia': { tuition: 28000, accommodation: 11000, food: 3500, transport: 1200 },
-        'Germany': { tuition: 5000, accommodation: 8000, food: 2500, transport: 800 },
-        'Ireland': { tuition: 18000, accommodation: 9000, food: 3000, transport: 1000 },
-        'New Zealand': { tuition: 22000, accommodation: 10000, food: 3200, transport: 1000 },
+    const applyDefaults = (country: string, program: string) => {
+        const countryData = COST_DATA[country];
+        if (countryData && countryData[program]) {
+            const d = countryData[program];
+            setTuition(d.tuition.toString());
+            setAccommodation(d.accommodation.toString());
+            setFood(d.food.toString());
+            setTransport(d.transport.toString());
+            setMiscellaneous(d.misc.toString());
+        }
+        // Auto-set duration from program level
+        const prog = PROGRAM_LEVELS.find(p => p.id === program);
+        if (prog) setDuration(prog.duration);
     };
 
     const handleCountryChange = (country: string) => {
         setSelectedCountry(country);
-        const defaults = countryDefaults[country];
-        if (defaults) {
-            setTuition(defaults.tuition.toString());
-            setAccommodation(defaults.accommodation.toString());
-            setFood(defaults.food.toString());
-            setTransport(defaults.transport.toString());
-            setMiscellaneous('2000');
-        }
+        if (selectedProgram) applyDefaults(country, selectedProgram);
+    };
+
+    const handleProgramChange = (program: string) => {
+        setSelectedProgram(program);
+        if (selectedCountry) applyDefaults(selectedCountry, program);
     };
 
     const tuitionNum = parseFloat(tuition as string) || 0;
@@ -81,7 +157,7 @@ const CostCalculatorPage = () => {
                             {/* Input Form */}
                             <div className="bg-white rounded-2xl shadow-lg p-8">
                                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Enter Your Details</h2>
-                                <p className="text-sm text-gray-600 mb-6">Enter your details to calculate estimated costs. Placeholders show typical values.</p>
+                                <p className="text-sm text-gray-600 mb-6">Select country & program level to auto-fill estimated costs.</p>
 
                                 <div className="space-y-6">
                                     {/* Country Selection */}
@@ -97,10 +173,34 @@ const CostCalculatorPage = () => {
                                             <option value="">Choose a country</option>
                                             {countries.map((country) => (
                                                 <option key={country.slug} value={country.name}>
-                                                    {country.flag} {country.name}
+                                                    {country.name}
                                                 </option>
                                             ))}
                                         </select>
+                                    </div>
+
+                                    {/* Program Level */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            <GraduationCap className="w-4 h-4 inline mr-2" />
+                                            Program Level
+                                        </label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {PROGRAM_LEVELS.map((prog) => (
+                                                <button
+                                                    key={prog.id}
+                                                    type="button"
+                                                    onClick={() => handleProgramChange(prog.id)}
+                                                    className={`px-4 py-3 rounded-lg border-2 text-sm font-semibold transition-all duration-200 ${
+                                                        selectedProgram === prog.id
+                                                            ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
+                                                            : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300 hover:bg-gray-100'
+                                                    }`}
+                                                >
+                                                    {prog.label}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
 
                                     {/* Duration */}
@@ -248,7 +348,7 @@ const CostCalculatorPage = () => {
                                 <Button
                                     className="w-full"
                                     size="lg"
-                                    onClick={() => window.open(generateWhatsAppLink('919824372321', 'Hi, I need personalized counseling for studying abroad and cost planning.'), '_blank')}
+                                    onClick={() => window.open(generateWhatsAppLink('919824372395', 'Hi, I need personalized counseling for studying abroad and cost planning.'), '_blank')}
                                 >
                                     Get Personalized Counseling
                                 </Button>

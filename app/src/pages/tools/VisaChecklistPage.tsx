@@ -84,9 +84,43 @@ const VisaChecklistPage = () => {
             'Academic transcripts',
             'English language test results',
             'Private medical insurance',
-            'Explanation of gaps in education',
             'Passport photographs',
             'Visa application fee',
+        ],
+        'South Korea': [
+            'Valid Passport (minimum 6 months validity)',
+            'Admission letter from Korean university',
+            'D-2 Visa application form',
+            'Academic transcripts and certificates',
+            'Bank statements (minimum KRW 9,000,000)',
+            'IELTS/TOEFL score or TOPIK certificate',
+            'Statement of Purpose',
+            'Passport photographs',
+            'Visa application fee receipt',
+            'Medical insurance proof',
+        ],
+        'Dubai': [
+            'Valid Passport (minimum 6 months validity)',
+            'Admission letter from Dubai university',
+            'Academic transcripts and certificates',
+            'Passport photographs',
+            'Bank statements (proof of financial support)',
+            'IELTS/TOEFL score',
+            'Medical fitness certificate (done in Dubai)',
+            'Health insurance documents',
+            'Visa application fee receipt',
+        ],
+        'Singapore': [
+            'Valid Passport',
+            'Acceptance letter from ICA-approved institution',
+            'Student\'s Pass application via SOLAR+',
+            'Academic transcripts',
+            'IELTS/TOEFL score',
+            'Financial proof (bank statements)',
+            'Passport photographs',
+            'In-Principle Approval (IPA) letter',
+            'Medical examination report (done in Singapore)',
+            'Visa application fee receipt',
         ],
         'New Zealand': [
             'Valid Passport',
@@ -112,7 +146,10 @@ const VisaChecklistPage = () => {
             'Australia': 'Australia',
             'Germany': 'Germany',
             'Ireland': 'Ireland',
-            'New Zealand': 'New Zealand'
+            'New Zealand': 'New Zealand',
+            'South Korea': 'South Korea',
+            'Dubai': 'Dubai',
+            'Singapore': 'Singapore',
         };
         return mapping[countryName] || countryName;
     };
@@ -187,7 +224,7 @@ const VisaChecklistPage = () => {
                                 <option value="">Choose a country</option>
                                 {countries.map((country) => (
                                     <option key={country.slug} value={country.name}>
-                                        {country.flag} {country.name}
+                                        {country.name}
                                     </option>
                                 ))}
                             </select>
@@ -271,13 +308,15 @@ const VisaChecklistPage = () => {
                                         <div className="bg-gray-50 rounded-lg p-4">
                                             <h4 className="font-semibold text-gray-900 mb-2">⏱️ Processing Time</h4>
                                             <p className="text-lg font-semibold text-gray-700">
-                                                {selectedCountry === 'USA' && '3-5 days after interview'}
-                                                {selectedCountry === 'UK' && '3 weeks'}
+                                                {selectedCountry === 'United States' && '3-5 days after interview'}
+                                                {selectedCountry === 'United Kingdom' && '3 weeks'}
                                                 {selectedCountry === 'Canada' && '4-8 weeks'}
                                                 {selectedCountry === 'Australia' && '4-8 weeks'}
                                                 {selectedCountry === 'Germany' && '6-12 weeks'}
-                                                {selectedCountry === 'Ireland' && '4-8 weeks'}
                                                 {selectedCountry === 'New Zealand' && '4-6 weeks'}
+                                                {selectedCountry === 'South Korea' && '5-10 business days'}
+                                                {selectedCountry === 'Dubai' && '2-3 weeks'}
+                                                {selectedCountry === 'Singapore' && '4-6 weeks'}
                                             </p>
                                         </div>
                                     </div>
@@ -287,7 +326,7 @@ const VisaChecklistPage = () => {
                                     <Button
                                         className="w-full"
                                         size="lg"
-                                        onClick={() => window.open(generateWhatsAppLink('919824372321', `Hi, I need assistance with my ${selectedCountry} student visa application.`), '_blank')}
+                                        onClick={() => window.open(generateWhatsAppLink('919824372395', `Hi, I need assistance with my ${selectedCountry} student visa application.`), '_blank')}
                                     >
                                         Get Visa Filing Assistance
                                     </Button>

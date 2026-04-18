@@ -56,10 +56,6 @@ export const services: Service[] = [
         answer: 'We maintain a 98% visa success rate across all destinations. Our expert counselors ensure your application is complete and accurate before submission.'
       },
       {
-        question: 'Do you charge for counseling?',
-        answer: 'Our initial counseling sessions are completely free. We only charge for specific services like visa filing assistance, which varies by destination.'
-      },
-      {
         question: 'How long does the visa process take?',
         answer: 'Visa processing times vary by country: UK (3 weeks), USA (3-5 days after interview), Canada (4-8 weeks), Australia (4-8 weeks), and Ireland (4-8 weeks).'
       },

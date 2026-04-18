@@ -31,13 +31,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-400 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">M</span>
-              </div>
-              <div>
-                <span className="font-display font-bold text-lg">Maruti Overseas</span>
-                <span className="block text-xs text-gray-400">Since 2004</span>
+            <Link to="/" className="flex items-center mb-6">
+              <div className="bg-white rounded-xl px-2 py-1 inline-flex shadow-md">
+                <img
+                  src="/images/logo.jpg"
+                  alt="Maruti Overseas Consultancy"
+                  className="h-12 w-auto object-contain"
+                />
               </div>
             </Link>
             <p className="text-gray-400 text-sm mb-6">
@@ -122,7 +122,7 @@ const Footer = () => {
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary-400 flex-shrink-0" />
                 <div className="text-sm text-gray-400">
-                  <a href="tel:+919824372321" className="hover:text-white">+91 98243 72321</a>
+                  <a href="tel:+919824372395" className="hover:text-white">+91 98243 72395</a>
                 </div>
               </div>
               <div className="flex items-center gap-3">

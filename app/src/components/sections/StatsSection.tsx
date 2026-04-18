@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { TrendingUp, Users, Award, Globe, CheckCircle } from 'lucide-react';
+import { TrendingUp, Globe, CheckCircle } from 'lucide-react';
 
 interface StatItemProps {
   icon: React.ReactNode;
@@ -74,45 +74,31 @@ const StatsSection = () => {
   const stats = [
     {
       icon: <TrendingUp className="w-7 h-7 text-primary-600" />,
-      value: 20,
+      value: 22,
       suffix: '+',
       label: 'Years of Experience',
       delay: 0,
-    },
-    {
-      icon: <Users className="w-7 h-7 text-primary-600" />,
-      value: 10000,
-      suffix: '+',
-      label: 'Students Placed',
-      delay: 100,
     },
     {
       icon: <CheckCircle className="w-7 h-7 text-primary-600" />,
       value: 98,
       suffix: '%',
       label: 'Visa Success Rate',
-      delay: 200,
-    },
-    {
-      icon: <Award className="w-7 h-7 text-primary-600" />,
-      value: 850,
-      suffix: '+',
-      label: 'Partner Universities',
-      delay: 300,
+      delay: 100,
     },
     {
       icon: <Globe className="w-7 h-7 text-primary-600" />,
       value: 15,
       suffix: '+',
       label: 'Countries',
-      delay: 400,
+      delay: 200,
     },
   ];
 
   return (
     <section className="py-16 bg-gray-50">
       <div className="container-custom">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
           {stats.map((stat, index) => (
             <StatItem key={index} {...stat} />
           ))}

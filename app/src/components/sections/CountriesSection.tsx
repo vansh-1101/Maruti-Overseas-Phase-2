@@ -43,7 +43,10 @@ const CountriesSection = () => {
               {/* Content */}
               <div className="absolute inset-0 p-6 flex flex-col justify-end">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-4xl">{country.flag}</span>
+                  <span
+                    className={`fi fi-${country.countryCode} rounded-md shadow-sm`}
+                    style={{ width: '2.5rem', height: '1.875rem', display: 'inline-block' }}
+                  />
                   <div>
                     <h3 className="text-xl font-bold text-white">{country.name}</h3>
                     <p className="text-white/80 text-sm">

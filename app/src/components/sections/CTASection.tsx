@@ -5,7 +5,7 @@ import { generateWhatsAppLink } from '@/lib/utils';
 
 const CTASection = () => {
   const whatsappLink = generateWhatsAppLink(
-    '919824372321',
+    '919824372395',
     'Hi, I am interested in studying abroad. Can you please provide more information?'
   );
 
@@ -53,9 +53,9 @@ const CTASection = () => {
           </div>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 text-white/80">
-            <a href="tel:+919824372321" className="flex items-center gap-2 hover:text-white">
+            <a href="tel:+919824372395" className="flex items-center gap-2 hover:text-white">
               <Phone className="w-5 h-5" />
-              <span>+91 98243 72321</span>
+              <span>+91 98243 72395</span>
             </a>
             <span className="hidden sm:block">|</span>
             <a href="tel:+917926532221" className="flex items-center gap-2 hover:text-white">
@@ -69,20 +69,12 @@ const CTASection = () => {
             <p className="text-white/60 text-sm mb-4">Trusted by students across Gujarat</p>
             <div className="flex flex-wrap items-center justify-center gap-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">20+</div>
+                <div className="text-2xl font-bold text-white">22+</div>
                 <div className="text-white/60 text-sm">Years Experience</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-white">10K+</div>
-                <div className="text-white/60 text-sm">Students Helped</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">98%</div>
                 <div className="text-white/60 text-sm">Success Rate</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-white">850+</div>
-                <div className="text-white/60 text-sm">Partner Universities</div>
               </div>
             </div>
           </div>

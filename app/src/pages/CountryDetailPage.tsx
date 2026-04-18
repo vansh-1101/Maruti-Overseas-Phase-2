@@ -40,7 +40,10 @@ const CountryDetailPage = () => {
           </Link>
 
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-6xl md:text-7xl">{country.flag}</span>
+            <span
+              className={`fi fi-${country.countryCode} rounded-lg shadow-md`}
+              style={{ width: '4rem', height: '3rem', display: 'inline-block' }}
+            />
             <div>
               <h1 className="text-4xl md:text-5xl font-display font-bold text-white">
                 Study in {country.name}

@@ -51,13 +51,13 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: '5',
-    name: 'Neha Gupta',
+    name: 'Harsh Patel',
     avatar: '/images/testimonial-5.jpg',
-    university: 'Trinity College Dublin',
-    country: 'Ireland',
+    university: 'National University of Singapore',
+    country: 'Singapore',
     course: 'MSc Computer Science',
     rating: 5,
-    content: 'I was confused about studying in Ireland, but the counselors at Maruti Overseas cleared all my doubts. They helped me secure a scholarship too! Forever grateful.',
+    content: 'Maruti Overseas guided me step-by-step for my NUS application. Their counselors were knowledgeable and patient. I got my Singapore Student\'s Pass without any hassle!',
     verified: true,
     createdAt: new Date('2024-03-22')
   },

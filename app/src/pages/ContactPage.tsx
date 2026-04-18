@@ -47,7 +47,7 @@ const ContactPage = () => {
   };
 
   const whatsappLink = generateWhatsAppLink(
-    '919824372321',
+    '919824372395',
     'Hi, I am interested in studying abroad. Can you please provide more information?'
   );
 
@@ -56,7 +56,7 @@ const ContactPage = () => {
       name: 'Ahmedabad Office',
       address: '702, Shree Balaji Heights, Swagat Cross RD, Chimanlal Girdharlal Rd, Ahmedabad, Gujarat 380006',
       phone: '+91-79-40030637',
-      mobile: '+91-98243 72321',
+      mobile: '+91-98243 72395',
       mapsUrl: 'https://www.google.com/maps/search/?api=1&query=702+Shree+Balaji+Heights+Swagat+Cross+RD+Chimanlal+Girdharlal+Rd+Ahmedabad+Gujarat+380006',
     },
     {
@@ -108,8 +108,8 @@ const ContactPage = () => {
               <p className="text-gray-600 text-sm mb-3">
                 Speak directly with our counselors
               </p>
-              <a href="tel:+919824372321" className="text-primary-600 font-medium">
-                +91 98243 72321
+              <a href="tel:+919824372395" className="text-primary-600 font-medium">
+                +91 98243 72395
               </a>
             </div>
 

@@ -152,7 +152,7 @@ const ServiceDetailPage = () => {
                     </Link>
                   </Button>
                   <a
-                    href="tel:+919824372321"
+                    href="tel:+919824372395"
                     className="flex items-center justify-center gap-2 w-full py-3 border-2 border-white text-white rounded-lg font-medium hover:bg-white/10"
                   >
                     <Phone className="w-4 h-4" />

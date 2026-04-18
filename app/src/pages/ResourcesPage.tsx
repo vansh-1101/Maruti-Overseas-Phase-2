@@ -41,10 +41,6 @@ const ResourcesPage = () => {
       answer: 'We maintain a 98% visa success rate across all destinations. Our expert counselors ensure your application is complete and accurate before submission.',
     },
     {
-      question: 'Do you charge for counseling?',
-      answer: 'Our initial counseling sessions are completely free. We only charge for specific services like visa filing assistance, which varies by destination.',
-    },
-    {
       question: 'How long does the visa process take?',
       answer: 'Visa processing times vary by country: UK (3 weeks), USA (3-5 days after interview), Canada (4-8 weeks), Australia (4-8 weeks), and Ireland (4-8 weeks).',
     },
@@ -217,7 +213,7 @@ const ResourcesPage = () => {
                   </p>
                   <Button
                     className="w-full"
-                    onClick={() => window.open(generateWhatsAppLink('919824372321', `Hi, I would like to register for the Study in ${['UK', 'USA', 'Canada'][i - 1]} Webinar.`), '_blank')}
+                    onClick={() => window.open(generateWhatsAppLink('919824372395', `Hi, I would like to register for the Study in ${['UK', 'USA', 'Canada'][i - 1]} Webinar.`), '_blank')}
                   >Register Free</Button>
                 </div>
               </div>

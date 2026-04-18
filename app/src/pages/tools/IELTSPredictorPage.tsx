@@ -272,7 +272,7 @@ const IELTSPredictorPage = () => {
                                 <Button
                                     className="w-full"
                                     size="lg"
-                                    onClick={() => window.open(generateWhatsAppLink('919824372321', 'Hi, I want to book IELTS preparation course and improve my score.'), '_blank')}
+                                    onClick={() => window.open(generateWhatsAppLink('919824372395', 'Hi, I want to book IELTS preparation course and improve my score.'), '_blank')}
                                 >
                                     Book IELTS Preparation Course
                                 </Button>

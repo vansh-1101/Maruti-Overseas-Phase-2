@@ -2,7 +2,7 @@ import { MessageCircle } from 'lucide-react';
 import { generateWhatsAppLink } from '@/lib/utils';
 
 const WhatsAppButton = () => {
-  const phoneNumber = '919824372321';
+  const phoneNumber = '919824372395';
   const message = 'Hi, I am interested in studying abroad. Can you please provide more information?';
 
   return (

@@ -1,6 +1,20 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Search, ArrowRight, MapPin, Sparkles, BookOpen, GraduationCap, Globe } from 'lucide-react';
 import { trialCourses, foreignCourses } from '@/data';
+
+/* ─── Filter keyword map (from navbar dropdown) ───────────────────── */
+const FILTER_MAP: Record<string, { tab: string; search: string }> = {
+  ielts:    { tab: 'Exam Prep', search: 'ielts' },
+  pte:      { tab: 'Exam Prep', search: 'pte' },
+  gmat:     { tab: 'Exam Prep', search: 'gmat' },
+  duolingo: { tab: 'Exam Prep', search: 'duolingo' },
+  french:   { tab: 'Language Learning', search: 'french' },
+  german:   { tab: 'Language Learning', search: 'german' },
+  spoken:   { tab: 'Language Learning', search: 'spoken english' },
+  skill:    { tab: 'Skill Development', search: '' },
+  abroad:   { tab: 'foreign', search: '' },
+};
 
 /* ─── Category tab config ─────────────────────────────────────────── */
 const TABS = [
@@ -91,8 +105,29 @@ const CourseCard = ({ course }: { course: AnyCoure }) => {
 
 /* ─── Page ────────────────────────────────────────────────────────── */
 const CoursesPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const gridRef = useRef<HTMLElement>(null);
+  const prevFilter = useRef<string | null>(null);
+
+  // Read ?filter= param from URL and apply it
+  useEffect(() => {
+    const filterKey = searchParams.get('filter');
+    if (filterKey && FILTER_MAP[filterKey] && filterKey !== prevFilter.current) {
+      const { tab, search: searchTerm } = FILTER_MAP[filterKey];
+      setActiveTab(tab);
+      setSearch(searchTerm);
+      prevFilter.current = filterKey;
+
+      // Scroll to courses grid after a brief delay for render
+      setTimeout(() => {
+        gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    } else if (!filterKey) {
+      prevFilter.current = null;
+    }
+  }, [searchParams]);
 
   const allCourses: AnyCoure[] = useMemo(
     () => [...trialCourses, ...foreignCourses],
@@ -119,6 +154,15 @@ const CoursesPage = () => {
     }
     return list;
   }, [allCourses, activeTab, search]);
+
+  // When user manually changes tab/search, clear the URL filter
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    setSearch('');
+    if (searchParams.has('filter')) {
+      setSearchParams({}, { replace: true });
+    }
+  };
 
   return (
     <>
@@ -597,7 +641,7 @@ const CoursesPage = () => {
                   role="tab"
                   aria-selected={activeTab === tab.id}
                   className={`courses-tab${activeTab === tab.id ? ' active' : ''}`}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                 >
                   <tab.icon size={13} />
                   {tab.label}
@@ -608,7 +652,7 @@ const CoursesPage = () => {
         </div>
 
         {/* ── Course Grid ── */}
-        <section className="courses-section">
+        <section className="courses-section" ref={gridRef}>
           <div className="courses-section__header">
             <h2 className="courses-section__title">
               {TABS.find(t => t.id === activeTab)?.label ?? 'All Courses'}

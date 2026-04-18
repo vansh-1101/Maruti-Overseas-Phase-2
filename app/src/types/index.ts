@@ -49,6 +49,7 @@ export interface Country {
   name: string;
   slug: string;
   flag: string;
+  countryCode: string;
   heroImage: string;
   description: string;
   benefits: Benefit[];

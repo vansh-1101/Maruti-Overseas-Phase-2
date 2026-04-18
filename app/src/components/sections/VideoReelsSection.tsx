@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { Play, X, ArrowRight } from 'lucide-react';
 
@@ -42,52 +43,72 @@ const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => void })
     <div
       onClick={onClose}
       style={{
-        position: 'fixed', inset: 0, zIndex: 200,
-        background: 'rgba(0,0,0,0.90)', backdropFilter: 'blur(12px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'fixed',
+        inset: 0,
+        zIndex: 99999,
+        background: 'rgba(0,0,0,0.92)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
       }}
     >
+      {/* Close button — top-right of viewport */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        style={{
+          position: 'absolute',
+          top: 16,
+          right: 16,
+          width: 44,
+          height: 44,
+          borderRadius: '50%',
+          border: '1px solid rgba(255,255,255,0.2)',
+          cursor: 'pointer',
+          background: 'rgba(255,255,255,0.1)',
+          color: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10,
+          transition: 'background 0.2s',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.25)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
+      >
+        <X size={20} />
+      </button>
+
+      {/* Video container */}
       <div
         onClick={e => e.stopPropagation()}
         style={{
           position: 'relative',
-          width: '100%', maxWidth: '360px',
-          margin: '0 16px',
+          width: '100%',
+          maxWidth: '420px',
           aspectRatio: '9/16',
-          borderRadius: '22px',
+          borderRadius: '18px',
           overflow: 'hidden',
-          boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
+          border: '2px solid rgba(255,255,255,0.1)',
+          background: '#000',
         }}
       >
-        {/*
-          allow="autoplay" is required — without it Chrome blocks autoplay inside iframes.
-          Loading is nearly instant because YouTube streams the Short progressively.
-        */}
         <iframe
           src={ytEmbed(reel.youtubeId)}
           title={reel.title}
           allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
           allowFullScreen
           style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%',
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
             border: 'none',
           }}
         />
-
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute', top: 14, right: 14,
-            width: 40, height: 40, borderRadius: '50%', border: 'none',
-            cursor: 'pointer', background: 'rgba(0,0,0,0.55)', color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            zIndex: 10,
-          }}
-        >
-          <X size={18} />
-        </button>
       </div>
     </div>
   );
@@ -401,8 +422,11 @@ const VideoReelsSection = () => {
         </div>
       </section>
 
-      {/* Modal */}
-      {activeReel && <VideoModal reel={activeReel} onClose={() => setActiveReel(null)} />}
+      {/* Modal — rendered via portal to escape parent overflow/mask/transform */}
+      {activeReel && createPortal(
+        <VideoModal reel={activeReel} onClose={() => setActiveReel(null)} />,
+        document.body
+      )}
     </>
   );
 };

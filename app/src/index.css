@@ -101,6 +101,11 @@
     --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
     --shadow-card-hover: 0 12px 24px rgba(0, 0, 0, 0.1);
     --shadow-button: 0 4px 12px rgba(37, 99, 235, 0.2);
+
+    /* Brand Turquoise */
+    --turquoise: #00d9b5;
+    --turquoise-dark: #00a896;
+    --navy: #1a2b4a;
   }
 }
 
@@ -125,7 +130,7 @@
 }
 
 @layer components {
-  /* Button Styles */
+  /* ─── Button Styles ─────────────────────────────── */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-lg transition-all duration-200;
   }
@@ -151,7 +156,48 @@
     @apply bg-primary-50;
   }
 
-  /* Card Styles */
+  /* CTA Button with lift & ripple */
+  .cta-button {
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 217, 181, 0.4);
+  }
+
+  .cta-button:active {
+    transform: translateY(-1px);
+  }
+
+  /* Ripple on click */
+  .cta-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .cta-button:active::after {
+    width: 300px;
+    height: 300px;
+  }
+
+  /* ─── Card Styles ───────────────────────────────── */
   .card-hover {
     @apply bg-white rounded-xl border border-gray-200 transition-all duration-300;
   }
@@ -162,7 +208,7 @@
     border-color: hsl(var(--primary-200));
   }
 
-  /* Section Styles */
+  /* ─── Section Styles ────────────────────────────── */
   .section-padding {
     @apply py-16 md:py-20 lg:py-24;
   }
@@ -181,7 +227,71 @@
     @apply bg-white/80 backdrop-blur-md;
   }
 
-  /* Animation Classes */
+  /* ─── Hero Load Animations ──────────────────────── */
+  /* These classes keep elements hidden until animation fires */
+  .hero-animate-badge {
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: slideInLeft 0.8s ease-out forwards;
+    animation-delay: 0.2s;
+  }
+
+  .hero-animate-title {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 0.4s;
+  }
+
+  .hero-animate-accent {
+    opacity: 0;
+    transform: scale(0.9);
+    animation: scaleUpGlow 0.8s ease-out forwards;
+    animation-delay: 0.6s;
+  }
+
+  .hero-animate-desc {
+    opacity: 0;
+    animation: fadeIn 0.8s ease-out forwards;
+    animation-delay: 0.8s;
+  }
+
+  .hero-animate-btn1 {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: 1.0s;
+  }
+
+  .hero-animate-btn2 {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: 1.2s;
+  }
+
+  .hero-animate-trust {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: 1.4s;
+  }
+
+  .hero-animate-form {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.9s ease-out forwards;
+    animation-delay: 0.5s;
+  }
+
+  .hero-animate-video {
+    opacity: 0;
+    transform: translateX(30px);
+    animation: slideInRight 1s ease-out forwards;
+    animation-delay: 0.3s;
+  }
+
+  /* ─── Generic Scroll-Triggered Animations ───────── */
   .animate-fade-up {
     animation: fadeUp 0.6s ease-out forwards;
   }
@@ -198,12 +308,84 @@
     animation: scaleIn 0.3s ease-out forwards;
   }
 
-  /* Stagger Animation Delays */
+  /* Scroll observer pattern */
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .scroll-animate.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scroll-animate:nth-child(1) { transition-delay: 0.1s; }
+  .scroll-animate:nth-child(2) { transition-delay: 0.2s; }
+  .scroll-animate:nth-child(3) { transition-delay: 0.3s; }
+  .scroll-animate:nth-child(4) { transition-delay: 0.4s; }
+
+  /* ─── Stagger Animation Delays ──────────────────── */
   .stagger-1 { animation-delay: 0.1s; }
   .stagger-2 { animation-delay: 0.2s; }
   .stagger-3 { animation-delay: 0.3s; }
   .stagger-4 { animation-delay: 0.4s; }
   .stagger-5 { animation-delay: 0.5s; }
+
+  /* ─── Trust / Visa Badge Pulse ──────────────────── */
+  .visa-success-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(0, 217, 181, 0.1);
+    border: 1px solid rgba(0, 217, 181, 0.3);
+    border-radius: 24px;
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  .trust-badge-pulse {
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  /* ─── Logo ──────────────────────────────────────── */
+  .site-logo {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto;
+    height: 45px;
+    max-height: 45px;
+    object-fit: contain;
+    z-index: 100;
+    transition: height 0.3s ease;
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .site-logo {
+      height: 36px;
+      max-height: 36px;
+    }
+  }
+
+  /* ─── Lazy Image ────────────────────────────────── */
+  .lazy-image {
+    opacity: 0.5;
+    filter: blur(5px);
+    transition: opacity 0.5s, filter 0.5s;
+  }
+
+  .lazy-image.loaded {
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
 @layer utilities {
@@ -232,7 +414,9 @@
   }
 }
 
-/* Keyframes */
+/* ════════════════════════════════════════════════
+   KEYFRAMES
+════════════════════════════════════════════════ */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -244,19 +428,37 @@
   }
 }
 
-@keyframes fadeIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(30px);
   }
   to {
     opacity: 1;
@@ -275,6 +477,35 @@
   }
 }
 
+@keyframes scaleUpGlow {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    text-shadow: 0 0 20px rgba(0, 217, 181, 0.4);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 217, 181, 0.3);
+    border-color: rgba(0, 217, 181, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(0, 217, 181, 0.65);
+    border-color: rgba(0, 217, 181, 0.65);
+  }
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
 @keyframes pulse {
   0%, 100% {
     box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4);
@@ -285,12 +516,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
 }
 
 /* WhatsApp Float Button */
@@ -315,4 +542,15 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--gray-400));
+}
+
+/* ─── Respect reduced-motion preference ─────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

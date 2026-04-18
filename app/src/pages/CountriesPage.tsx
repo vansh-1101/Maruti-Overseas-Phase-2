@@ -57,7 +57,10 @@ const CountriesPage = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-4 flex items-center gap-3">
-                    <span className="text-5xl">{country.flag}</span>
+                    <span
+                      className={`fi fi-${country.countryCode} rounded-md shadow-sm`}
+                      style={{ width: '2.8rem', height: '2rem', display: 'inline-block' }}
+                    />
                     <div>
                       <h2 className="text-2xl font-bold text-white">{country.name}</h2>
                       <p className="text-white/80 text-sm">
@@ -147,7 +150,7 @@ const CountriesPage = () => {
                 Book Free Counseling
               </Link>
               <a
-                href="tel:+919824372321"
+                href="tel:+919824372395"
                 className="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
               >
                 Call Us Now

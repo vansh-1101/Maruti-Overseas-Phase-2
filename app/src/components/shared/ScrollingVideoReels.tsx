@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Play, X } from 'lucide-react';
 
 /* ─── Types ─── */
@@ -64,21 +65,56 @@ export const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => 
     <div
       onClick={onClose}
       style={{
-        position: 'fixed', inset: 0, zIndex: 9999,
-        background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(12px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'fixed',
+        inset: 0,
+        zIndex: 99999,
+        background: 'rgba(0,0,0,0.92)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
       }}
     >
+      {/* Close button — top-right of viewport */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        style={{
+          position: 'absolute',
+          top: 16,
+          right: 16,
+          width: 44,
+          height: 44,
+          borderRadius: '50%',
+          border: '1px solid rgba(255,255,255,0.2)',
+          cursor: 'pointer',
+          background: 'rgba(255,255,255,0.1)',
+          color: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10,
+          transition: 'background 0.2s',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.25)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
+      >
+        <X size={20} />
+      </button>
+
+      {/* Video container */}
       <div
         onClick={e => e.stopPropagation()}
         style={{
           position: 'relative',
-          width: '100%', maxWidth: '360px',
-          margin: '0 16px',
+          width: '100%',
+          maxWidth: '420px',
           aspectRatio: '9/16',
-          borderRadius: '22px',
+          borderRadius: '18px',
           overflow: 'hidden',
           boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
+          border: '2px solid rgba(255,255,255,0.1)',
           background: '#000',
         }}
       >
@@ -103,26 +139,15 @@ export const VideoModal = ({ reel, onClose }: { reel: VideoReel; onClose: () => 
           allowFullScreen
           onLoad={() => setIframeReady(true)}
           style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%',
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
             border: 'none',
             opacity: iframeReady ? 1 : 0,
             transition: 'opacity 0.3s ease',
           }}
         />
-
-        {/* Close */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute', top: 14, right: 14, zIndex: 10,
-            width: 40, height: 40, borderRadius: '50%', border: 'none',
-            cursor: 'pointer', background: 'rgba(0,0,0,0.6)', color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          <X size={18} />
-        </button>
       </div>
     </div>
   );
@@ -290,49 +315,72 @@ export const InfiniteScrollColumn = ({
   );
 };
 
-/* ─── Main export ─── */
-export const ScrollingVideoReels = () => {
-  const [activeReel, setActiveReel] = useState<VideoReel | null>(null);
-  const col1 = reels.map(r => ({ ...r, uid: `c1-${r.id}` }));
+  /* ─── Main export ─── */
+  export const ScrollingVideoReels = () => {
+    const [activeReel, setActiveReel] = useState<VideoReel | null>(null);
+    const col1 = reels.map(r => ({ ...r, uid: `c1-${r.id}` }));
 
-  return (
-    <>
-      <style>{`
-        @keyframes scrollUp {
-          0%   { transform: translateY(0); }
-          100% { transform: translateY(-50%); }
-        }
-        .vrs-right-container {
-          position: absolute;
-          inset: 0;
-          overflow: hidden;
-          display: flex;
-          justify-content: flex-end;
-          padding: 0;
-          mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-        }
-        @media (max-width: 1024px) {
-          .vrs-right-container {
-            position: relative;
-            height: 500px;
-            justify-content: center;
+    return (
+      <>
+        <style>{`
+          @keyframes scrollUp {
+            0%   { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
           }
-        }
-        .vrs-col {
-          flex: 0 0 400px;
-          max-width: 100%;
-        }
-      `}</style>
+          .vrs-right-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-end;
+            padding: 0;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+          }
+          @media (max-width: 1024px) {
+            .vrs-right-container {
+              position: relative;
+              height: 100%;
+              justify-content: center;
+              align-items: flex-start;
+              padding: 0;
+              mask-image: none;
+              -webkit-mask-image: none;
+            }
+          }
+          .vrs-col {
+            width: 100%;
+            max-width: calc(100% - 32px);
+            margin: 0 auto;
+          }
+          @media (min-width: 480px) {
+            .vrs-col {
+              max-width: 340px;
+            }
+          }
+          @media (min-width: 640px) {
+            .vrs-col {
+              max-width: 380px;
+            }
+          }
+          @media (min-width: 1024px) {
+            .vrs-col {
+              flex: 0 0 400px;
+              max-width: 400px;
+              margin: 0;
+            }
+          }
+        `}</style>
 
-      <div className="vrs-right-container w-full h-full">
-        <div className="vrs-col">
-          <InfiniteScrollColumn items={col1} onPlay={setActiveReel} speed={25} />
+        <div className="vrs-right-container w-full h-full">
+          <div className="vrs-col">
+            <InfiniteScrollColumn items={col1} onPlay={setActiveReel} speed={25} />
+          </div>
         </div>
-      </div>
 
-      {activeReel && (
-        <VideoModal reel={activeReel} onClose={() => setActiveReel(null)} />
+        {activeReel && createPortal(
+        <VideoModal reel={activeReel} onClose={() => setActiveReel(null)} />,
+        document.body
       )}
     </>
   );

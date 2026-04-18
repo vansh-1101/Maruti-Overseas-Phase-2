@@ -70,7 +70,7 @@ const LeadPopup = () => {
   };
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = '919824372321';
+    const phoneNumber = '919824372395';
     const message = 'Hi, I am interested in studying abroad. Can you please provide more information?';
     window.open(generateWhatsAppLink(phoneNumber, message), '_blank');
     setIsOpen(false);
